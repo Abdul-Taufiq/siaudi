@@ -21,14 +21,14 @@ class UserPolicy
 
     public function addEvent(User $user)
     {
-        return $user->sub_jabatan === 'Kabid Internal Audit'
+        return $user->sub_jabatan === 'Kabid Audit Internal'
             ? Response::allow()
             : Response::denyWithStatus(403, 'Anda Bukan Kabid!');
     }
 
     public function Batasan(User $user, Kkpk $kkpk)
     {
-        if ($user->sub_jabatan === 'Kabid Internal Audit') {
+        if ($user->sub_jabatan === 'Kabid Audit Internal') {
             return Response::allow();
         } else {
             return $user->nama === $kkpk->nama_pemeriksa

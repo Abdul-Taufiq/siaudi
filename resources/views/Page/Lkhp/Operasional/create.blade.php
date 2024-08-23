@@ -56,13 +56,13 @@
 
         /* Mengganti warna border Select2 */
         /* .select2-container--default .select2-selection--single {
-                                                                                                                                                        border-color: red;
-                                                                                                                                                    } */
+                                                                                                                                                                border-color: red;
+                                                                                                                                                            } */
 
         /* Opsional: Ganti warna saat select di-focus */
         /* .select2-container--default.select2-container--focus .select2-selection--single {
-                                                                                                                                                        border-color: green;
-                                                                                                                                                    } */
+                                                                                                                                                                border-color: green;
+                                                                                                                                                            } */
     </style>
 
     <div class="content-wrapper">
@@ -290,7 +290,7 @@
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label for="dampak_resiko_1">Dampak/Resiko :</label>
+                                                <label for="dampak_resiko_1">Dampak/Risiko :</label>
                                                 <textarea class="summernote" name="dampak_resiko_1" id="dampak_resiko_1" cols="20" rows="5"></textarea>
                                             </div>
                                         </div>

@@ -378,7 +378,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="dampak_resiko">Dampak/Resiko :</label>
+                                        <label for="dampak_resiko">Dampak/Risiko :</label>
                                         <textarea name="dampak_resiko" id="dampak_resiko" cols="20" rows="5">
                                             {!! $data->dampak_resiko !!}
                                         </textarea>

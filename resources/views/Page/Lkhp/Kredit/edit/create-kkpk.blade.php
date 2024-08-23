@@ -119,7 +119,7 @@
                                             <td>: {{ $pivot->riskEvent->list_finding }}</td>
                                         </tr>
                                         <tr>
-                                            <th>Indikasi Resiko</th>
+                                            <th>Indikasi Risiko</th>
                                             <td>: {{ $pivot->riskEvent->indikasi_resiko }}</td>
                                         </tr>
                                     </table>

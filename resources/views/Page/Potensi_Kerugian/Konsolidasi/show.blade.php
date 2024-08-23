@@ -51,7 +51,7 @@
                             <tr>
                                 <th style="width: 40%">Kantor Cabang</th>
                                 <td style="width: 2%">:</td>
-                                <td>{{ $cabang }}</td>
+                                <td>Konsolidasi</td>
                             </tr>
                             <tr>
                                 <th>Total NOA Konsolidasi</th>
@@ -105,8 +105,9 @@
                     <tr>
                         <th style="width: 5%">#</th>
                         <th style="width: 50%">Risk Event</th>
-                        <th style="width: 15%">Total NOA</th>
+                        <th style="width: 5%">Total NOA</th>
                         <th style="width: 15%">Total BD</th>
+                        <th style="width: 10%">Cabang</th>
                         <th style="width: 15%">Potensi Kerugian</th>
                     </tr>
                 </thead>
@@ -122,7 +123,8 @@
                                 @if (!in_array($pivot->riskEvent->kode_finding, $displayedFindings))
                                     <td style="padding-bottom: 10px;">
                                         {{ $pivot->riskEvent->kode_finding }} -
-                                        {{ $pivot->riskEvent->list_finding }}
+                                        {{ $pivot->riskEvent->list_finding }} - <i>Tingkat Risiko:</i>
+                                        <b><i>{{ $pivot->riskEvent->indikasi_resiko }}</i></b>
                                     </td>
                                     @php
                                         $baki_debet = $pivot->kkpk->debitur->baki_debet;
@@ -130,6 +132,11 @@
                                         $displayedFindings[] = $pivot->riskEvent->kode_finding; // Tambahkan kode_finding ke array
                                     @endphp
                                     <td>{{ $item->pivot->groupBy('id_kkpk')->count() }}</td>
+                                    <td>
+                                        @foreach ($item->pivot as $kkpk)
+                                            - {{ $kkpk->kkpk->cabang->cabang }} <br>
+                                        @endforeach
+                                    </td>
                                     <td>
                                         {{ $total_bd ? 'Rp ' . number_format($total_bd, 0, ',', '.') : 'belum ada data' }}
                                     </td>

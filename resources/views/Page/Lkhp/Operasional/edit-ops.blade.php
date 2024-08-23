@@ -344,7 +344,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="dampak_resiko">Dampak/Resiko :</label>
+                                        <label for="dampak_resiko">Dampak/Risiko :</label>
                                         <textarea class="summernote" name="dampak_resiko" id="dampak_resiko" cols="20" rows="5">
                                             {!! $lkhp->dampak_resiko !!}
                                         </textarea>

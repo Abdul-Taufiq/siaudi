@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c262c938d2ccfb8605d553b3afc79b00",
+    "content-hash": "4780900839769732303568ad3103fbbc",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -4256,6 +4256,50 @@
                 }
             ],
             "time": "2023-01-12T18:13:24+00:00"
+        },
+        {
+            "name": "rkorebrits/htmltoopenxml",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rkorebrits/HTMLtoOpenXML.git",
+                "reference": "99302e2c3707a72a8bd8fa20c6d7a8b6923d10b8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rkorebrits/HTMLtoOpenXML/zipball/99302e2c3707a72a8bd8fa20c6d7a8b6923d10b8",
+                "reference": "99302e2c3707a72a8bd8fa20c6d7a8b6923d10b8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.4 || ^7.0 || ^7.1 || ^7.2 || ^8.0 || ^8.1"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "HTMLtoOpenXML\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Richard Korebrits",
+                    "email": "richard@korebrits.com"
+                }
+            ],
+            "description": "Convert HTML to OpenOfficeXML",
+            "keywords": [
+                "OOXML",
+                "html"
+            ],
+            "support": {
+                "source": "https://github.com/rkorebrits/HTMLtoOpenXML/tree/master"
+            },
+            "time": "2023-10-13T13:43:36+00:00"
         },
         {
             "name": "sabberworm/php-css-parser",

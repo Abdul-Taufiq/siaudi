@@ -130,7 +130,10 @@
                                 <div class="row ml-2">
                                     <div class="col-md-12">
                                         <b>Keterangan/Lainnya :</b> <br>
-                                        {!! $pivot->keterangan_re !!}
+                                        {!! $pivot->keterangan_re !!} <br>
+                                        @if ($pivot->lkhp->total_noa != null)
+                                            Total NOA: {{ $pivot->lkhp->total_noa }}
+                                        @endif
                                     </div>
                                 </div>
 
@@ -239,9 +242,9 @@
                         <td>
                             <table class="table table-bordered">
                                 <tr style="text-align: center">
-                                    <td style="width: 60%">Tindakan Penyelesaian</td>
-                                    <td style="width: 20%;">Tanggal</td>
-                                    <td style="width: 20%;">Penanggung Jawab</td>
+                                    <td style="width: 60%; text-align: center">Tindakan Penyelesaian</td>
+                                    <td style="width: 20%; text-align: center">Tanggal</td>
+                                    <td style="width: 20%; text-align: center">Penanggung Jawab</td>
                                 </tr>
                                 <tr>
                                     <td>{!! $lkhp_final->komitmen_tindakan !!}</td>
@@ -261,7 +264,7 @@
                 <thead class="table-primary" style="text-align: left; font-size: 8pt; font-style: italic;">
                     <th>
                         &nbsp; Lembar Konfirmasi ini agar dikembalikan tanggal
-                        {{ $lkhp_final->created_at->translatedFormat('d F Y') }}
+                        {{ $lkhp_final->tgl_pengembalian ? $lkhp_final->tgl_pengembalian->translatedFormat('d F Y') : '-' }}
                     </th>
                 </thead>
                 <tbody>
@@ -314,8 +317,8 @@
         {{-- footer --}}
         <script type="text/php">
         if (isset($pdf)) {
-                $x = 480;
-                $y = 810;
+                $x = 500;
+                $y = 900;
                 $text = "Halaman {PAGE_NUM} dari {PAGE_COUNT}";
                 $font = null;
                 $size = 10;

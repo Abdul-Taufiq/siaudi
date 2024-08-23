@@ -1,5 +1,11 @@
 @extends('partial.main')
 @section('konten')
+    <style>
+        label {
+            font-size: 12px;
+        }
+    </style>
+
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -48,24 +54,69 @@
                                 @endif
 
                                 {{-- filter per tanggal --}}
-                                <div class="d-flex align-items-center justify-content-center flex-wrap">
-                                    <strong class="mb-2 mr-4">
-                                        <span class="text">Filter Pertanggal</span>
-                                    </strong>
-                                    <div class="d-flex align-items-end mr-2">
-                                        <div class="form-group mb-2">
-                                            <label for="min" class="sr-only">From:</label>
-                                            <input type="date" name="min" id="min" class="form-control">
-                                        </div>
-
-                                        <div class="form-group mb-2">
-                                            <label for="max" class="sr-only">To:</label>
-                                            <input type="date" name="max" id="max" class="form-control">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-2">
+                                                    <label for="min" class="">Filter dari:</label>
+                                                    <input type="date" name="min" id="min"
+                                                        class="form-control form-control-sm">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-2">
+                                                    <label for="max" class="">To:</label>
+                                                    <input type="date" name="max" id="max"
+                                                        class="form-control form-control-sm">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group input-group-sm mb-3">
+                                                    <label for="id_cabang">Kantor Cabang :</label>
+                                                    <select class="form-control form-control-sm input" name="id_cabang"
+                                                        id="id_cabang" required>
+                                                        <option disabled selected>- Pilih Kantor Cabang -</option>
+                                                        <option value="99">All Cabang</option>
+                                                        <option value="0">Kantor Pusat Management</option>
+                                                        <option value="1">Kantor Pusat Operasional</option>
+                                                        <option value="2">KC Temanggung</option>
+                                                        <option value="3">KC Wonosobo</option>
+                                                        <option value="4">KC Ambarawa</option>
+                                                        <option value="5">KC Semarang</option>
+                                                        <option value="6">KC Mranggen</option>
+                                                        <option value="7">KC Sukorejo</option>
+                                                        <option value="8">KC Weleri</option>
+                                                        <option value="9">KC Delanggu</option>
+                                                        <option value="10">KC Gombong</option>
+                                                        <option value="11">KC Sokaraja</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="objek_pemeriksaan">Objek Pemeriksaan :</label>
+                                                    <select class="form-control form-control-sm input"
+                                                        name="objek_pemeriksaan" id="objek_pemeriksaan">
+                                                        <option disabled selected>- Pilih Objek Pemeriksaan -</option>
+                                                        <option value="All">All</option>
+                                                        <option value="Kredit">Kredit</option>
+                                                        <option value="Operasional">Operasional</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex flex-row-reverse bd-highlight">
                                     <div class="btn-group mb-2">
-                                        <button id="btn-filter" class="btn btn-success">Filter</button>
-                                        <button id="btn-refresh" class="btn btn-info">Refresh</button>
+                                        <button id="btn-filter" class="btn btn-success btn-md">Filter</button>
+                                        <button id="btn-refresh" class="btn btn-info btn-md">Refresh</button>
                                     </div>
                                 </div>
                             </div>

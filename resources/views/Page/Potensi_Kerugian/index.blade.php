@@ -103,6 +103,7 @@
                                     <div class="btn-group mb-2">
                                         <button id="btn-filter" class="btn btn-success btn-md">Filter</button>
                                         <button id="btn-refresh" class="btn btn-info btn-md">Refresh</button>
+                                        <button id="btn-cetak" class="btn btn-primary btn-md">Cetak</button>
                                     </div>
                                 </div>
                             </div>

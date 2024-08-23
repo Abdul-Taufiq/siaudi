@@ -3,7 +3,7 @@ $(document).ready(function () {
     loadtable();
 });
 
-function loadtable(min, max, cari) {
+function loadtable(min, max, objek_pemeriksaan, id_cabang) {
     $(document).ready(function () {
         // Mendapatkan nilai kode dari URL (jika ada)
         let urlParams = new URLSearchParams(window.location.search);
@@ -60,8 +60,8 @@ function loadtable(min, max, cari) {
                 data: {
                     min: min,
                     max: max,
-                    kode: kode,
-                    cari: cari,
+                    objek_pemeriksaan: objek_pemeriksaan,
+                    id_cabang: id_cabang,
                 },
             },
             columns: [
@@ -147,8 +147,19 @@ function loadtable(min, max, cari) {
 $(document).on("click", "#btn-filter", function () {
     let min = $("#min").val();
     let max = $("#max").val();
-    $("#table_index").DataTable().destroy();
-    loadtable(min, max);
+    let objek_pemeriksaan = $("#objek_pemeriksaan").val();
+    let id_cabang = $("#id_cabang").val();
+
+    // console.log("Min: ", min);
+    // console.log("Max: ", max);
+    if (id_cabang == null) {
+        alert("Filter Kantor Cabang Tidak Boleh Kosong!");
+    } else if (objek_pemeriksaan == null) {
+        alert("Filter Objek Pemeriksaan Tidak Boleh Kosong!");
+    } else {
+        $("#table_index").DataTable().destroy();
+        loadtable(min, max, objek_pemeriksaan, id_cabang);
+    }
 });
 
 $(document).on("click", "#btn-refresh", function () {

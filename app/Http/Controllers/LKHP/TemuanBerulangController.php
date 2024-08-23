@@ -218,9 +218,9 @@ class TemuanBerulangController extends Controller
             'title' => 'Rekap Temuan Berulang'
         ]);
     }
-    
-    
-    
+
+
+
     public function show($Id)
     {
         $ids = Crypt::decrypt($Id);

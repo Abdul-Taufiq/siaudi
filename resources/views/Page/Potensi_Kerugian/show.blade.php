@@ -110,7 +110,7 @@
             <table class="border">
                 <thead style="background-color: lightseagreen">
                     <tr>
-                        <th style="width: 5%">#</th>
+                        <th style="width: 3%">#</th>
                         <th style="width: 50%">Risk Event</th>
                         <th style="width: 15%">Total NOA</th>
                         <th style="width: 15%">Total BD</th>
@@ -129,7 +129,8 @@
                                 @if (!in_array($pivot->riskEvent->kode_finding, $displayedFindings))
                                     <td style="padding-bottom: 10px;">
                                         {{ $pivot->riskEvent->kode_finding }} -
-                                        {{ $pivot->riskEvent->list_finding }}
+                                        {{ $pivot->riskEvent->list_finding }} - <i>Tingkat Risiko:</i>
+                                        <b><i>{{ $pivot->riskEvent->indikasi_resiko }}</i></b>
                                     </td>
                                     @php
                                         $baki_debet = $pivot->kkpk->debitur->baki_debet;

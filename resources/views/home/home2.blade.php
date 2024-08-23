@@ -1,5 +1,15 @@
 @extends('partial.main')
 @section('konten')
+    <style>
+        .img {
+            width: 50%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
+        }
+    </style>
+
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -35,6 +45,14 @@
                                 </ol>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-body">
+                        <img class="img" src="{{ asset('img/logo ksb.png') }}" alt="">
                     </div>
                 </div>
             </div>

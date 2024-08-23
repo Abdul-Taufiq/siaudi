@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\KKPK\Kkpk;
+use App\Models\LKHP\LkhpFinal;
 use App\Models\RiskEvent\RiskEvent;
 use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -19,6 +20,7 @@ class AuthServiceProvider extends ServiceProvider
         // PemDeposito::class => PemDepositoPolicy::class,
         RiskEvent::class => UserPolicy::class,
         Kkpk::class => UserPolicy::class,
+        LkhpFinal::class => UserPolicy::class
     ];
 
     /**

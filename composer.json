@@ -19,6 +19,7 @@
         "maatwebsite/excel": "^3.1",
         "mews/captcha": "^3.2",
         "phpoffice/phpword": "^1.2",
+        "rkorebrits/htmltoopenxml": "dev-master",
         "yajra/laravel-datatables": "9.0"
     },
     "require-dev": {

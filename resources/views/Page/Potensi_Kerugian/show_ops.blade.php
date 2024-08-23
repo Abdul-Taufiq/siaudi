@@ -93,7 +93,8 @@
                                 @if (!in_array($pivot->riskEvent->kode_finding, $displayedFindings))
                                     <td style="padding-bottom: 10px;">
                                         {{ $pivot->riskEvent->kode_finding }} -
-                                        {{ $pivot->riskEvent->list_finding }}
+                                        {{ $pivot->riskEvent->list_finding }} - <i>Tingkat Risiko:</i>
+                                        <b><i>{{ $pivot->riskEvent->indikasi_resiko }}</i></b>
                                     </td>
                                     @php
                                         // $baki_debet = $pivot->kkpk->debitur->baki_debet;

@@ -82,7 +82,7 @@
                         </td>
                         <td style="text-align: end">
                             <label>
-                                Indikasi Resiko : {{ $pivotsGroup->first()->riskEvent->indikasi_resiko }}
+                                Indikasi Risiko : {{ $pivotsGroup->first()->riskEvent->indikasi_resiko }}
                             </label>
                         </td>
                     </tr>
@@ -191,7 +191,7 @@
                                                 <tr>
                                                     <td style="width: 40%;">Kol/DPD</td>
                                                     <td>: {{ $pivot->kkpk->debitur->kol }} /
-                                                        {{ $pivot->kkpk->debitur->kol }}</td>
+                                                        {{ $pivot->kkpk->debitur->dpd }}</td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -252,7 +252,7 @@
                 {{-- Isi dampak/resiko --}}
                 <table class="border border-collapse" style="width: 100%">
                     <thead class="table-primary" style="text-align: center">
-                        <th>DAMPAK / RESIKO</th>
+                        <th>DAMPAK / RISIKO</th>
                     </thead>
                     <tbody>
                         <tr>
@@ -323,7 +323,7 @@
                     <thead class="table-primary" style="text-align: center">
                         <th>
                             Lembar Konfirmasi ini agar dikembalikan tanggal
-                            {{ $lkhp_final->created_at->translatedFormat('d F Y') }}
+                            {{ $lkhp_final->tgl_pengembalian ? $lkhp_final->tgl_pengembalian->translatedFormat('d F Y') : '-' }}
                         </th>
                     </thead>
                     <tbody>

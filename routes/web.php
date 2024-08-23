@@ -118,6 +118,8 @@ Route::group(['middleware' => ['permission']], function () {
         Route::get('/get-lkhp-bayangan', [LkhpFinalController::class, 'getLkhp']);
         // input data pendukung
         Route::any('/lkhp-input/{Id}', [LkhpFinalController::class, 'InputDataPendukung']);
+        Route::any('/lkhp-status/{Id}', [LkhpFinalController::class, 'StatusLkhp']);
+        Route::any('/lkhp-status/{Id}/{Tgl}', [LkhpFinalController::class, 'StatusLkhpIA']);
 
 
         // LKHP Rekap
@@ -128,6 +130,8 @@ Route::group(['middleware' => ['permission']], function () {
         // Route::resource('potensi-kerugian', LkhpRekapController::class)->parameters(['potensi-kerugian' => 'Id']);
         Route::any('potensi-kerugian', [LkhpRekapController::class, 'PotensiLossIndex']);
         Route::any('potensi-kerugian/{min}/{max}/{id_cabang}/{objek_pemeriksaan}', [LkhpRekapController::class, 'PotensiLossShow']);
+        // cetak
+        Route::any('potensi-kerugian-cetak/{min}/{max}/{id_cabang}/{objek_pemeriksaan}', [LkhpRekapController::class, 'PotensiLossPrint']);
 
 
         // Temuan Berulang

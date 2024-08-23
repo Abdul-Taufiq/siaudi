@@ -11,7 +11,7 @@ $(document).ready(function () {
     // });
 });
 
-function loadtable(min, max, cari) {
+function loadtable(min, max, objek_pemeriksaan, id_cabang) {
     $(document).ready(function () {
         // Mendapatkan nilai kode dari URL (jika ada)
         let urlParams = new URLSearchParams(window.location.search);
@@ -59,6 +59,9 @@ function loadtable(min, max, cari) {
             autoWidth: false,
             responsive: true,
             // scrollX: true,
+            oLanguage: {
+                sEmptyTable: "Tidak Ada Data Yang Ditemukan!",
+            },
 
             processing: true,
             serverSide: true,
@@ -68,8 +71,8 @@ function loadtable(min, max, cari) {
                 data: {
                     min: min,
                     max: max,
-                    kode: kode,
-                    cari: cari,
+                    objek_pemeriksaan: objek_pemeriksaan,
+                    id_cabang: id_cabang,
                 },
             },
             columns: [
@@ -97,7 +100,7 @@ function loadtable(min, max, cari) {
                         return (
                             moment(data.tgl_awal)
                                 .locale("id")
-                                .format("DD MMM YYYY") +
+                                .format("DD MMM") +
                             " s/d " +
                             moment(data.tgl_akhir)
                                 .locale("id")
@@ -131,6 +134,11 @@ function loadtable(min, max, cari) {
                     },
                 },
                 {
+                    data: "status",
+                    name: "status",
+                    searchable: false,
+                },
+                {
                     data: "action",
                     name: "action",
                     searchable: false,
@@ -139,7 +147,7 @@ function loadtable(min, max, cari) {
 
             columnDefs: [
                 {
-                    targets: [6, 7],
+                    targets: [5, 6, 7],
                     visible: false,
                     searchable: false,
                 },
@@ -161,8 +169,20 @@ function loadtable(min, max, cari) {
 $(document).on("click", "#btn-filter", function () {
     let min = $("#min").val();
     let max = $("#max").val();
-    $("#table_index").DataTable().destroy();
-    loadtable(min, max);
+    let objek_pemeriksaan = $("#objek_pemeriksaan").val();
+    let id_cabang = $("#id_cabang").val();
+
+    // console.log("Min: ", min);
+    // console.log("Max: ", max);
+    if (id_cabang == null) {
+        alert("Filter Kantor Cabang Tidak Boleh Kosong!");
+    } else if (objek_pemeriksaan == null) {
+        alert("Filter Objek Pemeriksaan Tidak Boleh Kosong!");
+    } else {
+        $("#table_index").DataTable().destroy();
+        loadtable(min, max, objek_pemeriksaan, id_cabang);
+        loadtotal(min, max, objek_pemeriksaan, id_cabang);
+    }
 });
 
 $(document).on("click", "#btn-refresh", function () {
@@ -170,3 +190,72 @@ $(document).on("click", "#btn-refresh", function () {
     loadtable();
 });
 // end datatables
+
+// response button click
+
+$(document).on("click", ".send", function () {
+    let id_lkhp = $(this).data("id");
+    let no_lkhp = $(this).data("kode");
+    let jabatan = $(this).data("jabatan");
+    console.log(jabatan);
+    let title = "";
+
+    if (jabatan === "Kasi Operasional" || jabatan === "Kasi Komersial") {
+        title =
+            "Apakah Anda Ingin Mengirim Data <b>" +
+            no_lkhp +
+            "</b> ke Pimpinan Cabang?";
+    } else if (jabatan === "Pimpinan Cabang") {
+        title =
+            "Apakah Anda Ingin Mengirim Data <b>" +
+            no_lkhp +
+            "</b> ke Audit Internal?";
+    } else {
+        title =
+            "Apakah Anda Ingin Mengirim Data <b>" +
+            no_lkhp +
+            "</b> ke Petugas Cabang?  <br> Isikan Tanggal Pengembalian berikut ini terlebih dahulu!";
+    }
+
+    if (jabatan === "Kabid Audit Internal") {
+        Swal.fire({
+            title: "Konfirmasi Tindakan",
+            html: title,
+            input: "date",
+            inputAttributes: {
+                name: "tgl_pengembalian",
+                id: "tgl_pengembalian",
+                required: true,
+            },
+            // showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Kirim Data!",
+            confirmButtonColor: "#27a844",
+            cancelButtonColor: "#dc3546",
+            // denyButtonText: `Don't save`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                let tgl_pengembalian = $("#tgl_pengembalian").val();
+                window.location.href =
+                    "/lkhp-status/" + id_lkhp + "/" + tgl_pengembalian;
+            }
+        });
+    } else {
+        Swal.fire({
+            title: "Konfirmasi Tindakan",
+            html: title,
+            // showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Kirim Data!",
+            confirmButtonColor: "#27a844",
+            cancelButtonColor: "#dc3546",
+            // denyButtonText: `Don't save`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                window.location.href = "/lkhp-status/" + id_lkhp;
+            }
+        });
+    }
+});

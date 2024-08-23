@@ -3,298 +3,181 @@
 namespace App\Http\Controllers\LKHP;
 
 use App\Http\Controllers\Controller;
-use App\Models\Lkhp\Lkhp;
-use App\Models\Lkhp\LkhpFinal;
-use App\Models\LKHP\Pivot;
+use App\Models\LKHP\{Lkhp, LkhpFinal, Pivot};
+use App\Models\LogActivity;
+use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use DOMDocument;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\Shared\Html;
+use View;
+use PhpOffice\PhpWord\TemplateProcessor;
+use Illuminate\Support\Facades\{Mail, Crypt, Response};
 
 class LkhpRekapController extends Controller
 {
-    public function index(Request $request)
+    // Menggunakan Simple HTML dan MIME Type: langsung print word tanpa library apapun
+    public function printLkhpAsWord($id)
     {
-        // Tangkap tanggal awal dan akhir dari request
-        $min = $request->min;
-        $max = $request->max;
+        $ids = Crypt::decrypt($id);
+        $lkhp_final = LkhpFinal::with(['pivot.pivotImg'])
+            ->where('id_lkhp_final', $ids)
+            ->first();
+        // Grouping pivots by id_event_risk
+        $groupedPivots = $lkhp_final->pivot->groupBy('id_event_risk');
 
-        // Cek apakah input hanya berupa tahun
-        // strlen memeriksa bahwa panjang karakter adalah 4 yang merujuk ke tahun
-        if (strlen($min) == 4 && strlen($max) == 4) {
-            $awal = Carbon::createFromDate($min, 1, 1)->startOfYear();
-            $akhir = Carbon::createFromDate($max, 12, 31)->endOfYear();
-        } else {
-            $awal = Carbon::parse($min)->startOfDay();
-            $akhir = Carbon::parse($max)->endOfDay();
-        }
-        $objek_pemeriksaan = $request->objek_pemeriksaan;
-        $reqCabang = $request->id_cabang;
+        $headers = array(
+            'Content-Type' => 'text/html',
+            'Content-Disposition' => 'attatchement;Filename=mydoc.doc'
+        );
 
-        // Debugging
-        // Log::info('Awal: ' . $awal->toDateTimeString());
-        // Log::info('Akhir: ' . $akhir->toDateTimeString());
+        return Response::make(view('Page.Lkhp_Final.print.print-ops-pdf', compact('lkhp_final', 'groupedPivots')), 200, $headers);
 
 
-        $id_cabang = auth()->user()->id_cabang;
-        $level = auth()->user()->level;
+        // Pengembalian dari tempalate word
+        // Creating the new document...
+        // $templatePath = ('template.docx');
+        // $phpWord = new TemplateProcessor($templatePath);
 
-        if (request()->ajax()) {
-            if (!empty($request->min)  && !empty($request->max)) {
-                // Enable query logging
-                // DB::enableQueryLog();
-                // Mengambil log query
-                // $queryLog = DB::getQueryLog();
-                // Output log
-                // print_r($queryLog);
-
-                if ($objek_pemeriksaan == 'All') {
-                    if ($reqCabang == '99') {
-                        # code...
-                        $data = LkhpFinal::whereBetween('created_at', [$awal, $akhir])
-                            ->orderBy('created_at', 'desc')->get();
-                    } else {
-                        # code...
-                        $data = LkhpFinal::whereBetween('created_at', [$awal, $akhir])
-                            ->where('id_cabang', $reqCabang)
-                            ->orderBy('created_at', 'desc')->get();
-                    }
-                } else {
-                    if ($reqCabang == '99') {
-                        # code...
-                        $data = LkhpFinal::whereBetween('created_at', [$awal, $akhir])
-                            ->where('objek_pemeriksaan', $objek_pemeriksaan)
-                            ->orderBy('created_at', 'desc')->get();
-                    } else {
-                        $data = LkhpFinal::whereBetween('created_at', [$awal, $akhir])
-                            ->where('id_cabang', $reqCabang)
-                            ->where('objek_pemeriksaan', $objek_pemeriksaan)
-                            ->orderBy('created_at', 'desc')->get();
-                    }
-                }
-
-
-                // Debugging
-                Log::info('Data Count: ' . $data->count());
-                foreach ($data as $item) {
-                    Log::info('Data created_at: ' . $item->created_at);
-                }
-            } else {
-                $data = LkhpFinal::orderBy('created_at', 'desc')->get();
-            }
-
-            return DataTables()->of($data)
-                ->addColumn('cabang', function ($data) {
-                    return $data->cabang->cabang;
-                })
-                ->addColumn('action', function ($data) {
-                    // Operasional
-                    if ($data->objek_pemeriksaan == 'Operasional') {
-                        $button = '<a href="/lkhp-ops/' . encrypt($data->id_lkhp) . '/show"
-                                            class="btn btn-info btn-sm detail_data">
-                                            <span class="icon text-white-50">
-                                            <i class="fa fa-eye"></i>
-                                            </span>
-                                        </a>';
-                        $button .= '&nbsp;';
-                        // Cek apakah user memiliki hak akses untuk mengedit atau menghapus
-                        if (auth()->user()->sub_jabatan == 'Kabid Internal Audit' || auth()->user()->nama == $data->nama_creator) {
-                            // Tombol edit
-                            $button .= '<a href="/data-lkhp-ops/' . encrypt($data->id_lkhp)  . '/edit" 
-                                                class="btn btn-warning btn-sm edit">
-                                                <i class="fa fa-edit"></i></a>';
-                            $button .= '&nbsp;';
-                            // Tombol hapus
-                            $button .= '<a data-toggle="modal" id="' . $data->id_lkhp  . '"
-                                                class="hapus btn btn-danger btn-sm delete-post ">
-                                                <i class="fa fa-trash"></i></a>';
-                        } else {
-                            // Jika tidak memenuhi kondisi, tambahkan kelas disabled pada tombol
-                            $button .= '<a class="btn btn-warning btn-sm edit disabled"><i class="fa fa-edit"></i></a>';
-                            $button .= '&nbsp;';
-                            $button .= '<a class="delete btn btn-danger btn-sm delete-post disabled"><i class="fa fa-trash"></i></a>';
-                        }
-                    }
-                    // Kredit 
-                    else {
-                        $button = '<a href="/data-lkhp/' . encrypt($data->id_lkhp) . '"
-                                            class="btn btn-info btn-sm detail_data">
-                                            <span class="icon text-white-50">
-                                            <i class="fa fa-eye"></i>
-                                            </span>
-                                        </a>';
-                        $button .= '&nbsp;';
-                        // Cek apakah user memiliki hak akses untuk mengedit atau menghapus
-                        if (auth()->user()->sub_jabatan == 'Kabid Internal Audit' || auth()->user()->nama == $data->nama_creator) {
-                            // Tombol edit
-                            $button .= '<a href="/data-lkhp/' . encrypt($data->id_lkhp)  . '/edit" 
-                                                class="btn btn-warning btn-sm edit">
-                                                <i class="fa fa-edit"></i></a>';
-                            $button .= '&nbsp;';
-                            // Tombol hapus
-                            $button .= '<a data-toggle="modal" id="' . $data->id_lkhp  . '"
-                                                class="hapus btn btn-danger btn-sm delete-post ">
-                                                <i class="fa fa-trash"></i></a>';
-                        } else {
-                            // Jika tidak memenuhi kondisi, tambahkan kelas disabled pada tombol
-                            $button .= '<a class="btn btn-warning btn-sm edit disabled"><i class="fa fa-edit"></i></a>';
-                            $button .= '&nbsp;';
-                            $button .= '<a class="delete btn btn-danger btn-sm delete-post disabled"><i class="fa fa-trash"></i></a>';
-                        }
-                    }
-                    return $button;
-                })
-
-                ->rawColumns(['action'])
-                ->addIndexColumn()
-                ->make(true);
-        }
-
-        // $data = LkhpFinal::all();
-
-
-        return view('Page.Lkhp_Rekap.index', ['title' => 'Rekap Lembar Konfirmasi (LKHP)']);
-    }
-
-
-
-    public function TotalRekap(Request $request)
-    {
-        // $min = $request->min;
-        // $max = $request->max;
-        // $objek_pemeriksaan = $request->objek_pemeriksaan;
-        // $reqCabang = $request->id_cabang;
-
-        $min = 2023;
-        $max = 2024;
-        $objek_pemeriksaan = "Kredit";
-        $reqCabang = 02;
-
-        // Cek apakah input hanya berupa tahun
-        // strlen memeriksa bahwa panjang karakter adalah 4 yang merujuk ke tahun
-        if (strlen($min) == 4 && strlen($max) == 4) {
-            $awal = Carbon::createFromDate($min, 1, 1)->startOfYear();
-            $akhir = Carbon::createFromDate($max, 12, 31)->endOfYear();
-        } else {
-            $awal = Carbon::parse($min)->startOfDay();
-            $akhir = Carbon::parse($max)->endOfDay();
-        }
-
-        if ($objek_pemeriksaan == 'All') {
-            if ($reqCabang == '99') {
-                # code...
-                $data = LkhpFinal::whereBetween('created_at', [$awal, $akhir])
-                    ->whereHas('pivot', function ($query) {
-                        $query->whereNotNull('id_lkhp_final');
-                    })
-                    ->with(['pivot.riskEvent'])
-                    ->with(['pivot.kkpk'])
-                    ->orderBy('created_at', 'desc')->get();
-            } else {
-                # code...
-                $data = LkhpFinal::whereBetween('created_at', [$awal, $akhir])
-                    ->where('id_cabang', $reqCabang)
-                    ->whereHas('pivot', function ($query) {
-                        $query->whereNotNull('id_lkhp_final');
-                    })
-                    ->with(['pivot.riskEvent'])
-                    ->with(['pivot.kkpk'])
-                    ->orderBy('created_at', 'desc')->get();
-            }
-        } else {
-            if ($reqCabang == '99') {
-                # code...
-                $data = LkhpFinal::whereBetween('created_at', [$awal, $akhir])
-                    ->where('objek_pemeriksaan', $objek_pemeriksaan)
-                    ->whereHas('pivot', function ($query) {
-                        $query->whereNotNull('id_lkhp_final');
-                    })
-                    ->with(['pivot.riskEvent'])
-                    ->with(['pivot.kkpk'])
-                    ->orderBy('created_at', 'desc')->get();
-            } else {
-                $data = LkhpFinal::whereBetween('created_at', [$awal, $akhir])
-                    ->where('id_cabang', $reqCabang)
-                    ->where('objek_pemeriksaan', $objek_pemeriksaan)
-                    ->orderBy('created_at', 'asc')->get();
-            }
-        }
-
-        // dd($data);
-
-
-        // return response()->json([
-        //     'status' => 200,
-        //     'data' => $data
+        // Setting values
+        // $phpWord->setValues([
+        // 'cabang' => $lkhp_final->cabang->cabang,
+        // 'tgl_pemeriksaan' => $lkhp_final->tgl_awal->translatedFormat('d') . ' s/d ' . $lkhp_final->tgl_akhir->translatedFormat('d F Y'),
+        // 'objek' => $lkhp_final->objek_pemeriksaan,
+        // 'no_lkhp' => $lkhp_final->no_lkhp,
+        // 'detail_re' => $detail_re,
+        // 'indikasi_resiko' => $indikasi_resiko,
+        // 'fakta' => $lkhp_final->desc_uraian_permasalahan_fakta,
+        // 'keadaan' => $lkhp_final->desc_keadaan_seharusnya,
+        // 'dampak' => $lkhp_final->dampak_resiko,
+        // 'penyebab' => $lkhp_final->penyebab_terjadi_penyimpangan,
+        // 'tindak_lanjut' => $lkhp_final->tindak_lanjut,
+        // 'tanggapan' => $lkhp_final->tanggapan_auditee,
+        // 'tindakan' => $lkhp_final->komitmen_tindakan,
+        // 'tgl' => $lkhp_final->komitmen_tgl ? $lkhp_final->komitmen_tgl->translatedFormat('d F Y') : 'Belum ada data',
+        // 'penanggung_jawab' => $lkhp_final->penggung_jawab,
+        // 'tgl_akhir' => $lkhp_final->tgl_akhir->translatedFormat('d F Y'),
+        // 'ttd_pemeriksa' => $lkhp_final->ttd_pemeriksa,
+        // 'ttd_kakom' => $lkhp_final->ttd_kakom ? $lkhp_final->ttd_kakom : 'Belum ada data',
+        // 'ttd_kaops' => $lkhp_final->ttd_kaops ? $lkhp_final->ttd_kaops : 'Belum ada data',
+        // 'ttd_pincab' => $lkhp_final->ttd_pincab ? $lkhp_final->ttd_pincab : 'Belum ada data'
         // ]);
 
-        foreach ($data as $item) {
-            echo "<br>========================== <br>";
-            echo "No Lkhp: " . $item->no_lkhp . "<br>";
-            echo "========================== <br>";
-            // echo "Keterangan : " . $item->pivot->keterangan_re . "<br>";
+        // Path untuk menyimpan dokumen yang sudah dihasilkan
+        // $outputPath = storage_path('app/public/output.docx');
 
-            $pivot = Pivot::where('id_lkhp_final', $item->id_lkhp_final)
-                ->get();
+        // // Simpan dokumen yang sudah diisi
+        // $phpWord->saveAs($outputPath);
 
-            $total_plafon = 0; // Inisialisasi variabel untuk total plafon
-            $total_baki_debet = 0; // Inisialisasi variabel untuk total baki_debet
+        // // Kembalikan file sebagai respon download
+        // if (file_exists($outputPath)) {
+        // return response()->download($outputPath)->deleteFileAfterSend(true);
+        // } else {
+        // return response()->json(['error' => 'Failed to generate the document.'], 500);
+        // }
+    }
 
-            foreach ($pivot as $itemPivot) {
-                $plafon = $itemPivot->kkpk->debitur->plafon;
-                $baki_debet = $itemPivot->kkpk->debitur->baki_debet;
-                $total_plafon += $plafon; // Tambahkan plafon debitur ke total plafon
-                $total_baki_debet += $baki_debet; // Tambahkan plafon debitur ke total plafon
 
-                echo "++<br>";
-                echo "Kode KKPK : " .  $itemPivot->kkpk->kode_kkpk . "<br>";
-                echo "Kode Risk Event : " .  $itemPivot->riskEvent->kode_finding . "<br>";
-                echo "Nama Debitur : " . $itemPivot->kkpk->debitur->nama_nasabah . "<br>";
-                echo "Plafon : " . $itemPivot->kkpk->debitur->plafon . "<br>";
-                echo "BD : " . $itemPivot->kkpk->debitur->baki_debet . "<br><br>";
 
-                echo "<br>";
-            }
+    // menggunakan PHPWord template prosesor menggunakan table
+    public function printLkhpAsWord2($id)
+    {
+        // Ambil semua data dari model
+        $users = User::all();
 
-            echo "Total Plafon: " . $total_plafon . "<br>";
-            echo "Total BD: " . $total_baki_debet . "<br>";
+        // Path ke template Word
+        $templatePath =  ('contoh.docx');
+
+        // Buat instance TemplateProcessor
+        $templateProcessor = new TemplateProcessor($templatePath);
+
+        // Gandakan baris tabel sesuai dengan jumlah data
+        $templateProcessor->cloneRow('nama', $users->count());
+
+        // Isi placeholder di tabel dengan data
+        foreach ($users as $index => $user) {
+            $templateProcessor->setValue('no#' . ($index + 1), $index++);
+            $templateProcessor->setValue('nama#' . ($index + 1), $user->nama);
+            $templateProcessor->setValue('email#' . ($index + 1), $user->email);
         }
+
+        // Simpan atau unduh dokumen yang telah diproses
+        $fileName = 'document_' . now()->format('YmdHis') . '.docx';
+        $filePath = storage_path('app/public/' . $fileName);
+        $templateProcessor->saveAs($filePath);
+
+        // Kembalikan response (misalnya, untuk mendownload file)
+        return response()->download($filePath)->deleteFileAfterSend(true);
+    }
+
+
+    // menggunakan PHPWord template prosesor Tanpa menggunakan Table tapi harus pakai blok di template wordnya list sama number
+    public function printLkhpAsWord3($id)
+    {
+        // Ambil semua data dari model
+        $users = User::all();
+
+        // Path ke template Word
+        $templatePath =  ('contoh tanpa tabel.docx');
+
+        // Buat instance TemplateProcessor
+        $templateProcessor = new TemplateProcessor($templatePath);
+
+        // Gandakan baris tabel sesuai dengan jumlah data
+        $templateProcessor->cloneBlock('item_block', $users->count(), true, true);
+
+        // Isi placeholder di tabel dengan data
+        foreach ($users as $index => $user) {
+            $templateProcessor->setValue('no#' . ($index + 1), $index + 1);
+            $templateProcessor->setValue('nama#' . ($index + 1), $user->nama);
+            $templateProcessor->setValue('email#' . ($index + 1), $user->email);
+        }
+
+        // Simpan atau unduh dokumen yang telah diproses
+        $fileName = 'document_' . now()->format('YmdHis') . '.docx';
+        $filePath = storage_path('app/public/' . $fileName);
+        $templateProcessor->saveAs($filePath);
+
+        // Kembalikan response (misalnya, untuk mendownload file)
+        return response()->download($filePath)->deleteFileAfterSend(true);
     }
 
 
 
-    public function create()
+    // Menampilkan data tunggal
+    public function printLkhpAsWord4($id)
     {
-        //
-    }
+        // Ambil semua data dari model
+        $user = User::first();
+
+        // Path ke template Word
+        $templatePath =  ('contoh 1 data.docx');
+
+        // Buat instance TemplateProcessor
+        $templateProcessor = new TemplateProcessor($templatePath);
 
 
-    public function store(Request $request)
-    {
-        //
-    }
+        // Isi placeholder di tabel dengan data
+        // foreach ($users as $index => $user) {
+        $templateProcessor->setValue('no', 1);
+        $templateProcessor->setValue('nama', $user->nama);
+        $templateProcessor->setValue('email', $user->email);
+        // img
+        $templateProcessor->setImageValue('CompanyLogo', 'path/to/company/logo.png');
+        // img with style
+        $templateProcessor->setImageValue('UserLogo', array('path' => 'path/to/logo.png', 'width' => 100, 'height' => 100, 'ratio' => false));
+        // }
 
+        // Simpan atau unduh dokumen yang telah diproses
+        $fileName = 'document_' . now()->format('YmdHis') . '.docx';
+        $filePath = storage_path('app/public/' . $fileName);
+        $templateProcessor->saveAs($filePath);
+        // $filePath = ('phpWord/' . $fileName); // alternatif save
 
-    public function show(Lkhp $lkhp)
-    {
-        //
-    }
-
-
-    public function edit(Lkhp $lkhp)
-    {
-        //
-    }
-
-
-    public function update(Request $request, Lkhp $lkhp)
-    {
-        //
-    }
-
-
-    public function destroy(Lkhp $lkhp)
-    {
-        //
+        // Kembalikan response (misalnya, untuk mendownload file)
+        return response()->download($filePath)->deleteFileAfterSend(true);
     }
 }

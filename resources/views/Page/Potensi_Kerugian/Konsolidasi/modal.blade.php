@@ -63,8 +63,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group mb-2">
                                         <label for="periode_pemeriksaan" class="">Periode Pemeriksaan:</label>
-                                        <select name="periode_pemeriksaan" id="periode_pemeriksaan"
-                                            class="form-control input form-control-sm yearSelect"></select>
+                                        <input type="date" class="form-control form-control-sm input"
+                                            id="periode_pemeriksaan" name="periode_pemeriksaan">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -138,8 +138,8 @@
                                     <div class="form-group mb-2">
                                         <label for="periode_pemeriksaan_edit" class="">Periode
                                             Pemeriksaan:</label>
-                                        <select name="periode_pemeriksaan_edit" id="periode_pemeriksaan_edit"
-                                            class="form-control input form-control-sm yearSelect"></select>
+                                        <input type="date" class="form-control form-control-sm input"
+                                            id="periode_pemeriksaan_edit" name="periode_pemeriksaan_edit">
                                     </div>
                                 </div>
                                 <div class="col-md-6">

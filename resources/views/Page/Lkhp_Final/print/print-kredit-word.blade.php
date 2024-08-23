@@ -13,7 +13,7 @@
 
     <style>
         @page {
-            size: a4 potrait;
+            size: 216mm 330mm;
             margin: 15mm 10mm 10mm 15mm;
             font-family: Tahoma, sans-serif;
             text-align: justify;
@@ -37,6 +37,11 @@
 
         h3 {
             font-size: 11pt;
+        }
+
+        .logo {
+            width: 65px;
+            height: auto;
         }
     </style>
 </head>
@@ -89,6 +94,12 @@
             </tr>
         </table>
     </header>
+
+    <ol style='font-family: "JetBrains Mono"; font-size: 12px;'>
+        <li>penyelesaian akan segera dilaksanakan</li>
+        <li>target akan diup</li>
+    </ol>
+
 
     <br>
 
@@ -156,7 +167,7 @@
                                                         <tr>
                                                             <td style="border: none">Nama Kasi Komersial</td>
                                                             <td style="width: 1%; border: none;">:</td>
-                                                            <td style="border: none">{{ $pivot->kkpk->nama_analis }}
+                                                            <td style="border: none">{{ $pivot->kkpk->nama_kakom }}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -362,9 +373,9 @@
                         <td>
                             <table class="table table-bordered">
                                 <tr style="text-align: center">
-                                    <td style="width: 60%">Tindakan Penyelesaian</td>
-                                    <td style="width: 20%;">Tanggal</td>
-                                    <td style="width: 20%;">Penanggung Jawab</td>
+                                    <td style="width: 60%; text-align: center">Tindakan Penyelesaian</td>
+                                    <td style="width: 20%; text-align: center">Tanggal</td>
+                                    <td style="width: 20%; text-align: center">Penanggung Jawab</td>
                                 </tr>
                                 <tr>
                                     <td>{!! $lkhp_final->komitmen_tindakan !!}</td>
@@ -385,7 +396,7 @@
                 <thead class="table-primary" style="text-align: left; font-size: 8pt; font-style: italic;">
                     <th style="text-align: left">
                         Lembar Konfirmasi ini agar dikembalikan tanggal
-                        {{ $lkhp_final->created_at->translatedFormat('d F Y') }}
+                        {{ $lkhp_final->tgl_pengembalian->translatedFormat('d F Y') }}
                     </th>
                 </thead>
                 <tbody>
@@ -439,8 +450,8 @@
         {{-- footer --}}
         <script type="text/php">
             if (isset($pdf)) {
-                $x = 480;
-                $y = 810;
+                $x = 500;
+                $y = 900;
                 $text = "Halaman {PAGE_NUM} dari {PAGE_COUNT}";
                 $font = null;
                 $size = 10;

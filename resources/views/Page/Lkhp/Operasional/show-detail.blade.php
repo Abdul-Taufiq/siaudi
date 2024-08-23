@@ -82,7 +82,7 @@
                         </td>
                         <td style="text-align: end">
                             <label>
-                                Indikasi Resiko : {{ $pivotsGroup->first()->riskEvent->indikasi_resiko }}
+                                Indikasi Risiko : {{ $pivotsGroup->first()->riskEvent->indikasi_resiko }}
                             </label>
                         </td>
                     </tr>
@@ -160,7 +160,7 @@
                 {{-- Isi dampak/resiko --}}
                 <table class="border border-collapse" style="width: 100%">
                     <thead class="table-primary" style="text-align: center">
-                        <th>DAMPAK / RESIKO</th>
+                        <th>DAMPAK / RISIKO</th>
                     </thead>
                     <tbody>
                         <tr>

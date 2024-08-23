@@ -160,24 +160,26 @@
                         <div class="card">
                             <div class="card-header">
                                 <h6>Lembar Konfirmasi Hasil Pemeriksaan Final &rarr;</h6>
-                                <div class="row">
-                                    <div class="col-md-3 ">
-                                        <button type="button"
-                                            class="btn btn-primary btn-icon-text btn-rounded btnpdf w-100 btn-sm"
-                                            data-id="{{ encrypt($lkhp->id_lkhp_final) }}">
-                                            <i class="fa fa-print" aria-hidden="true"></i> &nbsp;
-                                            <b>PRINT LKHP As PDF</b>
-                                        </button>
+                                @can('addEvent', App\Models\LKHP\LkhpFinal::class)
+                                    <div class="row">
+                                        <div class="col-md-3 ">
+                                            <button type="button"
+                                                class="btn btn-primary btn-icon-text btn-rounded btnpdf w-100 btn-sm"
+                                                data-id="{{ encrypt($lkhp->id_lkhp_final) }}">
+                                                <i class="fa fa-print" aria-hidden="true"></i> &nbsp;
+                                                <b>PRINT LKHP As PDF</b>
+                                            </button>
+                                        </div>
+                                        <div class="col-md-3 ">
+                                            <button type="button"
+                                                class="btn btn-primary btn-icon-text btn-rounded btnword w-100 btn-sm"
+                                                data-id="{{ encrypt($lkhp->id_lkhp_final) }}">
+                                                <i class="fa fa-print" aria-hidden="true"></i> &nbsp;
+                                                <b>PRINT LKHP As Word</b>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="col-md-3 ">
-                                        <button type="button"
-                                            class="btn btn-primary btn-icon-text btn-rounded btnword w-100 btn-sm"
-                                            data-id="{{ encrypt($lkhp->id_lkhp_final) }}">
-                                            <i class="fa fa-print" aria-hidden="true"></i> &nbsp;
-                                            <b>PRINT LKHP As Word</b>
-                                        </button>
-                                    </div>
-                                </div>
+                                @endcan
                             </div>
                             <div class="card-body">
                                 <iframe src="/show-detail-final-kredit/{{ encrypt($lkhp->id_lkhp_final) }}}"

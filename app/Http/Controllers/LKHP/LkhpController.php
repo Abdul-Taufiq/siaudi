@@ -25,29 +25,63 @@ class LkhpController extends Controller
         $username = auth()->user()->nama;
         $level = auth()->user()->level;
         $id_cabang = auth()->user()->id_cabang;
+        $reqCabang = $request->id_cabang;
+        $reqObjek = $request->objek_pemeriksaan;
 
         if (request()->ajax()) {
             if ($level == 'MEDIUM USER') {
                 if (!empty($request->min)) {
-                    $data = Lkhp::whereBetween('created_at', [$awal, $akhir])
-                        ->where('id_cabang', $id_cabang)
-                        ->orderBy('created_at', 'desc')->get();
+                    if ($reqObjek == 'All') {
+                        $data = Lkhp::whereBetween('created_at', [$awal, $akhir])
+                            ->where('id_cabang', $id_cabang)
+                            ->orderBy('created_at', 'desc')->get();
+                    } else {
+                        $data = Lkhp::whereBetween('created_at', [$awal, $akhir])
+                            ->where('id_cabang', $id_cabang)
+                            ->where('objek_pemeriksaan', $reqObjek)
+                            ->orderBy('created_at', 'desc')->get();
+                    }
                 } else {
                     $data = Lkhp::orderBy('created_at', 'desc')
                         ->where('id_cabang', $id_cabang)->get();
                 }
             } else {
-                if (auth()->user()->sub_jabatan == 'Kabid Internal Audit') {
+                if (auth()->user()->sub_jabatan == 'Kabid Audit Internal') {
                     if (!empty($request->min)) {
-                        $data = Lkhp::whereBetween('created_at', [$awal, $akhir])
-                            ->orderBy('created_at', 'desc')->get();
+                        if ($reqObjek == 'All') {
+                            if ($reqCabang == 99) {
+                                $data = Lkhp::whereBetween('created_at', [$awal, $akhir])
+                                    ->orderBy('created_at', 'desc')->get();
+                            } else {
+                                $data = Lkhp::whereBetween('created_at', [$awal, $akhir])
+                                    ->where('id_cabang', $reqCabang)
+                                    ->orderBy('created_at', 'desc')->get();
+                            }
+                        } else {
+                            if ($reqCabang == 99) {
+                                $data = Lkhp::whereBetween('created_at', [$awal, $akhir])
+                                    ->where('objek_pemeriksaan', $reqObjek)
+                                    ->orderBy('created_at', 'desc')->get();
+                            } else {
+                                $data = Lkhp::whereBetween('created_at', [$awal, $akhir])
+                                    ->where('objek_pemeriksaan', $reqObjek)
+                                    ->where('id_cabang', $reqCabang)
+                                    ->orderBy('created_at', 'desc')->get();
+                            }
+                        }
                     } else {
                         $data = Lkhp::orderBy('created_at', 'desc')->get();
                     }
                 } else {
                     if (!empty($request->min)) {
-                        $data = Lkhp::where('nama_creator', $username)->whereBetween('created_at', [$awal, $akhir])
-                            ->orderBy('created_at', 'desc')->get();
+                        if ($reqCabang == 99) {
+                            $data = Lkhp::where('nama_creator', $username)->whereBetween('created_at', [$awal, $akhir])
+                                ->orderBy('created_at', 'desc')->get();
+                        } else {
+                            $data = Lkhp::where('nama_creator', $username)->whereBetween('created_at', [$awal, $akhir])
+                                ->where('id_cabang', $reqCabang)
+                                ->orderBy('created_at', 'desc')->get();
+                        }
                     } else {
                         $data = Lkhp::where('nama_creator', $username)->orderBy('created_at', 'desc')->get();
                     }
@@ -69,7 +103,7 @@ class LkhpController extends Controller
                                         </a>';
                         $button .= '&nbsp;';
                         // Cek apakah user memiliki hak akses untuk mengedit atau menghapus
-                        if (auth()->user()->sub_jabatan == 'Kabid Internal Audit' || auth()->user()->nama == $data->nama_creator) {
+                        if (auth()->user()->sub_jabatan == 'Kabid Audit Internal' || auth()->user()->nama == $data->nama_creator) {
                             // cek apakah kkpk udah ditambahkan ke LKHP atau belum if yes maka button off
                             if ($data->status == null) {
                                 // Tombol edit
@@ -104,7 +138,7 @@ class LkhpController extends Controller
                                         </a>';
                         $button .= '&nbsp;';
                         // Cek apakah user memiliki hak akses untuk mengedit atau menghapus
-                        if (auth()->user()->sub_jabatan == 'Kabid Internal Audit' || auth()->user()->nama == $data->nama_creator) {
+                        if (auth()->user()->sub_jabatan == 'Kabid Audit Internal' || auth()->user()->nama == $data->nama_creator) {
                             // cek apakah kkpk udah ditambahkan ke LKHP atau belum if yes maka button off
                             if ($data->status == null) {
                                 // Tombol edit
@@ -265,7 +299,7 @@ class LkhpController extends Controller
                         KKpk::where('id_kkpk', $idKkpk)->update([
                             'status' => 'Created LKHP'
                         ]);
-                        
+
                         $piv_kkpk = Pivot::create([
                             'id_lkhp' => $lkhp->id_lkhp,
                             'id_event_risk' => $request->input('id_event_risk_' . $re),

@@ -23,6 +23,7 @@ class KkpkController extends Controller
         $username = auth()->user()->nama;
         $level = auth()->user()->level;
         $id_cabang = auth()->user()->id_cabang;
+        $reqCabang = $request->id_cabang;
 
         if (request()->ajax()) {
             if ($level == 'MEDIUM USER') {
@@ -35,17 +36,29 @@ class KkpkController extends Controller
                         ->where('id_cabang', $id_cabang)->get();
                 }
             } else {
-                if (auth()->user()->sub_jabatan == 'Kabid Internal Audit') {
+                if (auth()->user()->sub_jabatan == 'Kabid Audit Internal') {
                     if (!empty($request->min)) {
-                        $data = Kkpk::whereBetween('created_at', [$awal, $akhir])
-                            ->orderBy('created_at', 'desc')->get();
+                        if ($reqCabang == 99) {
+                            $data = Kkpk::whereBetween('created_at', [$awal, $akhir])
+                                ->orderBy('created_at', 'desc')->get();
+                        } else {
+                            $data = Kkpk::whereBetween('created_at', [$awal, $akhir])
+                                ->where('id_cabang', $reqCabang)
+                                ->orderBy('created_at', 'desc')->get();
+                        }
                     } else {
                         $data = Kkpk::orderBy('created_at', 'desc')->get();
                     }
                 } else {
                     if (!empty($request->min)) {
-                        $data = Kkpk::where('nama_pemeriksa', $username)->whereBetween('created_at', [$awal, $akhir])
-                            ->orderBy('created_at', 'desc')->get();
+                        if ($reqCabang == 99) {
+                            $data = Kkpk::where('nama_pemeriksa', $username)->whereBetween('created_at', [$awal, $akhir])
+                                ->orderBy('created_at', 'desc')->get();
+                        } else {
+                            $data = Kkpk::where('nama_pemeriksa', $username)->whereBetween('created_at', [$awal, $akhir])
+                                ->where('id_cabang', $reqCabang)
+                                ->orderBy('created_at', 'desc')->get();
+                        }
                     } else {
                         $data = Kkpk::where('nama_pemeriksa', $username)->orderBy('created_at', 'desc')->get();
                     }
@@ -71,7 +84,7 @@ class KkpkController extends Controller
                                     </a>';
                     $button .= '&nbsp;';
                     // Cek apakah user memiliki hak akses untuk mengedit atau menghapus
-                    if (auth()->user()->sub_jabatan == 'Kabid Internal Audit' || auth()->user()->nama == $data->nama_pemeriksa) {
+                    if (auth()->user()->sub_jabatan == 'Kabid Audit Internal' || auth()->user()->nama == $data->nama_pemeriksa) {
                         // cek apakah kkpk udah ditambahkan ke LKHP atau belum if yes maka button off
                         if ($data->status == null) {
                             # code...

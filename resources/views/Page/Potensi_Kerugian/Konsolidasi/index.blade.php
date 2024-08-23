@@ -71,7 +71,7 @@
                                         @foreach ($data as $item)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $item->periode_pemeriksaan->format('Y') }}</td>
+                                                <td>{{ $item->periode_pemeriksaan->translatedFormat('d F Y') }}</td>
                                                 <td>{{ $item->total_noa }}</td>
                                                 <td>
                                                     {{ $item->total_plafon ? 'Rp ' . number_format($item->total_plafon, 0, ',', '.') : 'belum ada data' }}
@@ -107,15 +107,15 @@
                                             <div class="col-md-6">
                                                 <div class="form-group mb-2">
                                                     <label for="min" class="">Filter dari Tahun:</label>
-                                                    <select name="min" id="min"
-                                                        class="form-control form-control-sm yearSelect"></select>
+                                                    <input type="date" name="min" id="min"
+                                                        class="form-control form-control-sm">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group mb-2">
                                                     <label for="max" class="">To:</label>
-                                                    <select name="max" id="max"
-                                                        class="form-control form-control-sm yearSelect"></select>
+                                                    <input type="date" name="max" id="max"
+                                                        class="form-control form-control-sm">
                                                 </div>
                                             </div>
                                         </div>
@@ -151,6 +151,7 @@
                                     <div class="btn-group mb-2">
                                         <button id="btn-filter" class="btn btn-success btn-md">Filter</button>
                                         <button id="btn-refresh" class="btn btn-info btn-md">Refresh</button>
+                                        <button id="btn-cetak" class="btn btn-primary btn-md">Cetak</button>
                                     </div>
                                 </div>
                             </div>
@@ -312,7 +313,9 @@
 
                 console.log("Nama Kredit:", Id, Kode);
                 console.log("Copyright by Abdul Taufiq");
-                $("#modalEditLabel").text("EDIT DATA - " + Kode);
+                $("#modalEditLabel").text("EDIT DATA - " + moment(Kode)
+                    .locale("id")
+                    .format("L"));
                 $("#modalEdit").modal("show");
 
                 // Setiap kali tombol edit diklik, atur border menjadi border-success
@@ -340,12 +343,38 @@
                         //     .locale("id")
                         //     .format("LL");
                         // );
+                        $("#periode_pemeriksaan_edit").val(
+                            moment(response.data.periode_pemeriksaan).format("YYYY-MM-DD")
+                        );
+
                         $("#total_noa_edit").val(response.data.total_noa);
-                        $("#total_plafon_edit").val(response.data.total_plafon);
-                        $("#total_bd_edit").val(response.data.total_bd);
+                        $("#total_plafon_edit").val(formatRupiah(response.data.total_plafon
+                            .toString(),
+                            "Rp. "));
+                        $("#total_bd_edit").val(formatRupiah(response.data.total_bd.toString(),
+                            "Rp. "));
+
 
                         // link formnya
                         $("#editForm").attr("action", "/potensi-loss-konsolidasi/" + Id);
+
+
+                        function formatRupiah(angka, prefix) {
+                            var numberString = angka.replace(/[^,\d]/g, "").toString(),
+                                split = numberString.split(","),
+                                sisa = split[0].length % 3,
+                                rupiah = split[0].substr(0, sisa),
+                                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+                            if (ribuan) {
+                                separator = sisa ? "." : "";
+                                rupiah += separator + ribuan.join(".");
+                            }
+
+                            rupiah = split[1] !== undefined ? rupiah + "," + split[1] : rupiah;
+
+                            return prefix && rupiah ? prefix + rupiah : rupiah;
+                        }
                     },
                 });
             });

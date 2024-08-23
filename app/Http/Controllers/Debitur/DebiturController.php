@@ -53,7 +53,7 @@ class DebiturController extends Controller
                     //                     </span>
                     //                 </a>';
                     // $button .= '&nbsp;';
-                    if (auth()->user()->sub_jabatan == 'Kabid Internal Audit') {
+                    if (auth()->user()->sub_jabatan == 'Kabid Audit Internal') {
                         $button = '<a data-toggle="modal" data-target="#modalEdit' . $data->id_debitur . '" id="' . $data->id_debitur . '"
                                             class="btn btn-warning btn-sm edit" data-kode_form="' . $data->no_rekening . '">
                                             <i class="fa fa-edit"></i></a>';
@@ -106,14 +106,14 @@ class DebiturController extends Controller
         $data = $request->file('file_excel');
         $originalName = $data->getClientOriginalName();
         $extension = $data->getClientOriginalExtension();
-    
+
         // Buat nama file unik dengan menambahkan timestamp atau UUID
         $namaFile = pathinfo($originalName, PATHINFO_FILENAME) . ' - ' . date('dmY-His') . '.' . $extension;
         $filePath = 'file_upload/Debitur/' . $namaFile;
-    
+
         // Simpan file ke storage publik
         $data->move(public_path('file_upload/Debitur'), $namaFile);
-    
+
         // Lempar ke Fungsi Import
         $fullPath = public_path('file_upload/Debitur/' . $namaFile);
         Excel::import(new ImportDebitur(request()->cabang), $fullPath);
