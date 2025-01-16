@@ -8,6 +8,7 @@ use DateTime;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class ImportDebitur implements ToModel, WithHeadingRow
@@ -19,6 +20,7 @@ class ImportDebitur implements ToModel, WithHeadingRow
     {
         $this->cabang = $cabang;
     }
+
 
     public function model(array $row)
     {
@@ -64,6 +66,12 @@ class ImportDebitur implements ToModel, WithHeadingRow
             'no_hp' => $row['no_hp'],
             'kolektor' => $row['kolektor']
         ]);
+    }
+
+
+    public function chunkSize(): int
+    {
+        return 1000; // Memproses 1000 baris per batch
     }
 
 

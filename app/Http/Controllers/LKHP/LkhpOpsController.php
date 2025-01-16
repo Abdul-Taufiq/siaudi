@@ -307,8 +307,10 @@ class LkhpOpsController extends Controller
             }
         }
 
+
+
         // log Act
-        $aksi = "(u) Update RE untuk LKHP Nomor: " . $pivot_tunggal->lkhp->no_lkhp_bayangan;
+        $aksi = "(u) Update RE untuk LKHP Nomor: " . $lkhp->no_lkhp_bayangan;
         $this->logAct($aksi);
 
         return redirect()->route('data-lkhp.index')->with('AlertSuccess', 'Data LKHP Operasional berhasil diubah');
@@ -342,9 +344,13 @@ class LkhpOpsController extends Controller
                 $data = base64_decode($data);
 
                 // Buat nama file gambar baru
+                // $image_name = '/upload/img/' . time() . $key . '.png';
+                // // Simpan gambar ke dalam direktori yang ditentukan
+                // file_put_contents(public_path() . $image_name, $data);
+
                 $image_name = '/upload/img/' . time() . $key . '.png';
-                // Simpan gambar ke dalam direktori yang ditentukan
-                file_put_contents(public_path() . $image_name, $data);
+                file_put_contents(public_path('upload/img/' . time() . $key . '.png'), $data);
+
 
                 // Hapus atribut 'rc' yang lama
                 $img->removeAttribute('src');

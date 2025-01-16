@@ -156,7 +156,7 @@ function loadtable(min, max, id_cabang) {
 $(document).on("click", "#btn-filter", function () {
     let min = $("#min").val();
     let max = $("#max").val();
-    let id_cabang = $("#id_cabang").val();
+    let id_cabang = $("#id_cabang_cari").val();
 
     // console.log("Min: ", min);
     // console.log("Max: ", max);
@@ -290,10 +290,29 @@ $("#nama_pincab").on("change", function () {
 });
 // end }}
 
+function formatRupiah(angka, prefix) {
+    var number_string = angka.toString().replace(/[^,\d]/g, ""),
+        split = number_string.split(","),
+        sisa = split[0].length % 3,
+        rupiah = split[0].substr(0, sisa),
+        ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+    // Tambahkan titik jika yang diinput sudah menjadi angka ribuan
+    if (ribuan) {
+        separator = sisa ? "." : "";
+        rupiah += separator + ribuan.join(".");
+    }
+
+    rupiah = split[1] !== undefined ? rupiah + "," + split[1] : rupiah;
+    return prefix === undefined ? rupiah : rupiah ? prefix + rupiah : "";
+}
+
 // ############$$$############## {{
 // Saat cabang dipilih, kirim permintaan AJAX untuk mendapatkan data nasabah
 cabangSelect.addEventListener("change", function () {
     var cabangId = cabangSelect.value;
+    console.log("cc");
+
     $.ajax({
         type: "GET",
         url: "/get-nasabah/" + cabangId,
@@ -425,31 +444,11 @@ $("#id_debitur").on("change", function () {
             $("#tgl_jth_tempo").text(
                 moment(nasabahData.tgl_jth_tempo).locale("id").format("LL")
             );
-            $("#plafon").text(
-                (this.value = formatRupiah(nasabahData.plafon, "Rp. "))
-            );
-            $("#baki_debet").text(
-                (this.value = formatRupiah(nasabahData.baki_debet, "Rp. "))
-            );
+            var formattedPlafon = formatRupiah(nasabahData.plafon, "Rp. ");
+            $("#plafon").text(formattedPlafon);
 
-            /* Fungsi formatRupiah */
-            function formatRupiah(angka, prefix) {
-                var numberString = angka.replace(/[^,\d]/g, "").toString(),
-                    split = numberString.split(","),
-                    sisa = split[0].length % 3,
-                    rupiah = split[0].substr(0, sisa),
-                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-                if (ribuan) {
-                    separator = sisa ? "." : "";
-                    rupiah += separator + ribuan.join(".");
-                }
-
-                rupiah =
-                    split[1] !== undefined ? rupiah + "," + split[1] : rupiah;
-
-                return prefix && rupiah ? prefix + rupiah : rupiah;
-            }
+            var formattedBD = formatRupiah(nasabahData.baki_debet, "Rp. ");
+            $("#baki_debet").text(formattedBD);
         },
     });
 });
@@ -771,32 +770,17 @@ $(document).ready(function () {
                     moment(nasabahData.tgl_jth_tempo).locale("id").format("LL")
                 );
 
-                // belum bisa
-                $("#plafon_kko").text(formatRupiah(nasabahData.plafon, "Rp. "));
-                $("#baki_debet_kko").text(
-                    formatRupiah(nasabahData.baki_debet, "Rp. ")
+                var formattedPlafonKKO = formatRupiah(
+                    nasabahData.plafon,
+                    "Rp. "
                 );
+                $("#plafon_kko").text(formattedPlafonKKO);
 
-                /* Fungsi formatRupiah */
-                function formatRupiah(angka, prefix) {
-                    var numberString = angka.toString().replace(/[^,\d]/g, ""),
-                        split = numberString.split(","),
-                        sisa = split[0].length % 3,
-                        rupiah = split[0].substr(0, sisa),
-                        ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-                    if (ribuan) {
-                        var separator = sisa ? "." : "";
-                        rupiah += separator + ribuan.join(".");
-                    }
-
-                    rupiah =
-                        split[1] !== undefined
-                            ? rupiah + "," + split[1]
-                            : rupiah;
-
-                    return prefix && rupiah ? prefix + rupiah : rupiah;
-                }
+                var formattedBDKKO = formatRupiah(
+                    nasabahData.baki_debet,
+                    "Rp. "
+                );
+                $("#baki_debet_kko").text(formattedBDKKO);
             },
             error: function (xhr, status, error) {
                 console.log("Error: " + error);

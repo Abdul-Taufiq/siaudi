@@ -177,21 +177,32 @@ class KkpkController extends Controller
             'alamat_jaminan' => $request->alamat_jaminan
         ]);
 
-        // convert u/ deskripsi
+        // Convert untuk deskripsi
         $deskripsi = $request->deskripsi;
         $dom = new DOMDocument();
-        $dom->loadHTML($deskripsi, 9);
+        // Menghindari error dengan menambahkan LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+        @$dom->loadHTML($deskripsi, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
         $images = $dom->getElementsByTagName('img');
         foreach ($images as $key => $img) {
-            $data = base64_decode(explode(',', explode(';', $img->getAttribute('src'))[1])[1]);
-            $image_name = '/upload/img/' . time() . $key . 'png';
-            file_put_contents(public_path() . $image_name, $data);
+            // Memisahkan dan mendekode gambar base64
+            $src = $img->getAttribute('src');
+            if (strpos($src, 'base64,') !== false) {
+                $data = base64_decode(explode(',', explode(';', $src)[1])[1]);
+                $image_name = 'upload/img/' . time() . $key . '.png';
 
-            $img->removeAttribute('src');
-            $img->setAttribute('src', $image_name);
+                // Menyimpan gambar ke public_html
+                file_put_contents(public_path($image_name), $data);
+
+                // Memperbarui atribut src dengan path yang benar
+                $img->removeAttribute('src');
+                $img->setAttribute('src', '/' . $image_name);
+            }
         }
+
+        // Menyimpan kembali HTML yang sudah diperbarui
         $deskripsi = $dom->saveHTML();
+
 
         $data = Kko::create([
             'id_kkpk' => $kkpk->id_kkpk,
@@ -230,21 +241,32 @@ class KkpkController extends Controller
             'alamat_jaminan' => $request->alamat_jaminan
         ]);
 
-        // convert u/ deskripsi
+        // Convert untuk deskripsi
         $deskripsi = $request->deskripsi;
         $dom = new DOMDocument();
-        $dom->loadHTML($deskripsi, 9);
+        // Menghindari error dengan menambahkan LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+        @$dom->loadHTML($deskripsi, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
         $images = $dom->getElementsByTagName('img');
         foreach ($images as $key => $img) {
-            $data = base64_decode(explode(',', explode(';', $img->getAttribute('src'))[1])[1]);
-            $image_name = '/upload/img/' . time() . $key . 'png';
-            file_put_contents(public_path() . $image_name, $data);
+            // Memisahkan dan mendekode gambar base64
+            $src = $img->getAttribute('src');
+            if (strpos($src, 'base64,') !== false) {
+                $data = base64_decode(explode(',', explode(';', $src)[1])[1]);
+                $image_name = 'upload/img/' . time() . $key . '.png';
 
-            $img->removeAttribute('src');
-            $img->setAttribute('src', $image_name);
+                // Menyimpan gambar ke public_html
+                file_put_contents(public_path($image_name), $data);
+
+                // Memperbarui atribut src dengan path yang benar
+                $img->removeAttribute('src');
+                $img->setAttribute('src', '/' . $image_name);
+            }
         }
+
+        // Menyimpan kembali HTML yang sudah diperbarui
         $deskripsi = $dom->saveHTML();
+
 
         $data = Kko::where('id_kkpk', $Id)->update([
             'tgl_kunjungan' => Carbon::createFromFormat('d-m-Y', $request->tgl_kunjungan)->format('Y-m-d'),

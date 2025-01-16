@@ -602,7 +602,7 @@ class LkhpController extends Controller
             return $html;
         }
         $dom = new DOMDocument();
-        @$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
         $images = $dom->getElementsByTagName('img');
         foreach ($images as $key => $img) {
@@ -613,7 +613,8 @@ class LkhpController extends Controller
                 $data = base64_decode($data);
 
                 $image_name = '/upload/img/' . time() . $key . '.png';
-                file_put_contents(public_path() . $image_name, $data);
+                // file_put_contents(public_path() . $image_name, $data);
+                file_put_contents(public_path('upload/img/' . time() . $key . '.png'), $data);
 
                 $img->removeAttribute('src');
                 $img->setAttribute('src', $image_name);

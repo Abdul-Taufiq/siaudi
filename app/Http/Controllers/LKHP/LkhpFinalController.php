@@ -847,7 +847,9 @@ class LkhpFinalController extends Controller
                 $data = base64_decode($data);
 
                 $image_name = '/upload/img/' . time() . $key . '.png';
-                file_put_contents(public_path() . $image_name, $data);
+                // file_put_contents(public_path() . $image_name, $data);
+
+                file_put_contents(public_path('upload/img/' . time() . $key . '.png'), $data);
 
                 $img->removeAttribute('src');
                 $img->setAttribute('src', $image_name);

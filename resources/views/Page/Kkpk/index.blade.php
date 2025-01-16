@@ -38,7 +38,7 @@
                             <div class="card-header">
                                 @if (auth()->user()->jabatan == 'Internal Audit')
                                     <a class="btn btn-primary btn-icon-split btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#addModal">
+                                        data-bs-target="#addModal" id="add">
                                         <span class="icon text-white-50">
                                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                         </span>
@@ -72,9 +72,9 @@
                                         <div class="row">
                                             <div class="col-md-8">
                                                 <div class="form-group input-group-sm mb-3">
-                                                    <label class="search" for="id_cabang">Kantor Cabang :</label>
-                                                    <select class="form-control form-control-sm " name="id_cabang"
-                                                        id="id_cabang">
+                                                    <label class="search" for="id_cabang_cari">Kantor Cabang :</label>
+                                                    <select class="form-control form-control-sm " name="id_cabang_cari"
+                                                        id="id_cabang_cari">
                                                         <option disabled selected>- Pilih Kantor Cabang -</option>
                                                         <option value="99">All Cabang</option>
                                                         <option value="0">Kantor Pusat Management</option>

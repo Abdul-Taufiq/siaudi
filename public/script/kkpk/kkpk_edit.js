@@ -34,6 +34,23 @@ $(document).ready(function () {
     $("#modalEdit input[type='hidden']").prop("required", false);
 });
 
+function formatRupiah(angka, prefix) {
+    var number_string = angka.toString().replace(/[^,\d]/g, ""),
+        split = number_string.split(","),
+        sisa = split[0].length % 3,
+        rupiah = split[0].substr(0, sisa),
+        ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+    // Tambahkan titik jika yang diinput sudah menjadi angka ribuan
+    if (ribuan) {
+        separator = sisa ? "." : "";
+        rupiah += separator + ribuan.join(".");
+    }
+
+    rupiah = split[1] !== undefined ? rupiah + "," + split[1] : rupiah;
+    return prefix === undefined ? rupiah : rupiah ? prefix + rupiah : "";
+}
+
 // edit data
 $(document).ready(function () {
     $("body").on("click", ".edit", function () {
@@ -300,12 +317,12 @@ $(document).ready(function () {
                 $("#tgl_jth_tempo_edit").text(
                     moment(debitur.tgl_jth_tempo).locale("id").format("LL")
                 );
-                $("#plafon_edit").text(
-                    (this.value = formatRupiah(debitur.plafon, "Rp. "))
-                );
-                $("#baki_debet_edit").text(
-                    (this.value = formatRupiah(debitur.baki_debet, "Rp. "))
-                );
+
+                var formattedPlafon = formatRupiah(debitur.plafon, "Rp. ");
+                $("#plafon_edit").text(formattedPlafon);
+
+                var formattedBD = formatRupiah(debitur.baki_debet, "Rp. ");
+                $("#baki_debet_edit").text(formattedBD);
 
                 //keterangan
                 $("#ktp_debitur_edit").val(keterangan.ktp_debitur);
@@ -446,27 +463,6 @@ $(document).ready(function () {
                         $(elemen).prop("required", false);
                     }
                 });
-
-                /* Fungsi formatRupiah */
-                function formatRupiah(angka, prefix) {
-                    var numberString = angka.replace(/[^,\d]/g, "").toString(),
-                        split = numberString.split(","),
-                        sisa = split[0].length % 3,
-                        rupiah = split[0].substr(0, sisa),
-                        ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-                    if (ribuan) {
-                        separator = sisa ? "." : "";
-                        rupiah += separator + ribuan.join(".");
-                    }
-
-                    rupiah =
-                        split[1] !== undefined
-                            ? rupiah + "," + split[1]
-                            : rupiah;
-
-                    return prefix && rupiah ? prefix + rupiah : rupiah;
-                }
 
                 // link formnya
                 $("#editForm").attr("action", "/data-kkpk/" + Id);
@@ -658,6 +654,7 @@ $(document).ready(function () {
                             .locale("id")
                             .format("LL")
                     );
+
                     $("#plafon_edit").text(
                         (this.value = formatRupiah(nasabahData.plafon, "Rp. "))
                     );
@@ -667,29 +664,6 @@ $(document).ready(function () {
                             "Rp. "
                         ))
                     );
-
-                    /* Fungsi formatRupiah */
-                    function formatRupiah(angka, prefix) {
-                        var numberString = angka
-                                .replace(/[^,\d]/g, "")
-                                .toString(),
-                            split = numberString.split(","),
-                            sisa = split[0].length % 3,
-                            rupiah = split[0].substr(0, sisa),
-                            ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-                        if (ribuan) {
-                            separator = sisa ? "." : "";
-                            rupiah += separator + ribuan.join(".");
-                        }
-
-                        rupiah =
-                            split[1] !== undefined
-                                ? rupiah + "," + split[1]
-                                : rupiah;
-
-                        return prefix && rupiah ? prefix + rupiah : rupiah;
-                    }
                 },
             });
         });

@@ -124,7 +124,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>Nama Kasi Komersial</td>
-                                                    <td>: {{ $pivot->kkpk->nama_analis }}</td>
+                                                    <td>: {{ $pivot->kkpk->nama_kakom }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Nama Pimpinan Cabang</td>
