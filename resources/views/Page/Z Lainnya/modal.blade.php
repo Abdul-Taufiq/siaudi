@@ -79,12 +79,12 @@
                                         <label for="jabatan">Jabatan :</label>
                                         <select class="form-control input" name="jabatan" id="jabatan" required>
                                             <option disabled selected>- Pilih Jabatan -</option>
-                                            <option value="Direktur Utama">Direktur Utama</option>
-                                            <option value="Direktur Komersial">Direktur Komersial</option>
+                                            <option value="Direksi">Direktur Utama</option>
+                                            <option value="Direksi">Direktur Komersial</option>
                                             <option value="Manager Bisnis">Manager Bisnis</option>
                                             <option value="Area Manager">Area Manager</option>
-                                            <option value="Analis Kredit Area">Analis Kredit Area</option>
-                                            <option value="Staf Analis Kredit Area">Staf Analis Kredit Area</option>
+                                            <option value="Analis Area">Analis Kredit Area</option>
+                                            <option value="Analis KPM">Analis KPM</option>
                                         </select>
                                     </div>
                                 </div>
@@ -144,16 +144,15 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="jabatan_edit">Jabatan :</label>
-                                        <select class="form-control input" name="jabatan_edit" id="jabatan_edit"
-                                            required>
+                                        <label for="jabatan">Jabatan :</label>
+                                        <select class="form-control input" name="jabatan" id="jabatan" required>
                                             <option disabled selected>- Pilih Jabatan -</option>
-                                            <option value="Direktur Utama">Direktur Utama</option>
-                                            <option value="Direktur Komersial">Direktur Komersial</option>
+                                            <option value="Direksi">Direktur Utama</option>
+                                            <option value="Direksi">Direktur Komersial</option>
                                             <option value="Manager Bisnis">Manager Bisnis</option>
                                             <option value="Area Manager">Area Manager</option>
-                                            <option value="Analis Kredit Area">Analis Kredit Area</option>
-                                            <option value="Staf Analis Kredit Area">Staf Analis Kredit Area</option>
+                                            <option value="Analis Area">Analis Kredit Area</option>
+                                            <option value="Analis KPM">Analis KPM</option>
                                         </select>
                                     </div>
                                 </div>

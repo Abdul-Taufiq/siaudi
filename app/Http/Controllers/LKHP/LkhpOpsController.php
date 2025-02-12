@@ -96,6 +96,7 @@ class LkhpOpsController extends Controller
                     'tgl_awal' => Carbon::createFromFormat('d-m-Y', $request->tgl_awal)->format('Y-m-d'),
                     'tgl_akhir' => Carbon::createFromFormat('d-m-Y', $request->tgl_akhir)->format('Y-m-d'),
                     'objek_pemeriksaan' => $request->objek_pemeriksaan,
+                    'objek_pemeriksaan_2' => 'Operasional',
                     'total_noa' => $request->input('total_noa_' . $re),
                     'no_lkhp_bayangan' => $nomer,
                     'desc_uraian_permasalahan_fakta' => $desc_uraian,
@@ -207,6 +208,7 @@ class LkhpOpsController extends Controller
             'tgl_akhir' => Carbon::createFromFormat('d-m-Y', $request->tgl_akhir)->format('Y-m-d'),
             'total_noa' => $request->total_noa,
             'objek_pemeriksaan' => $request->objek_pemeriksaan,
+            'objek_pemeriksaan_2' => 'Operasional',
             'desc_uraian_permasalahan_fakta' => $desc_uraian,
             'desc_keadaan_seharusnya' => $desc_keadaan,
             'penyebab_terjadi_penyimpangan' => $penyebab_penyimpangan,
@@ -348,7 +350,7 @@ class LkhpOpsController extends Controller
                 // // Simpan gambar ke dalam direktori yang ditentukan
                 // file_put_contents(public_path() . $image_name, $data);
 
-                $image_name = '/upload/img/' . time() . $key . '.png';
+                $image_name = url('/resource-gambar/' . time() . $key . '.png');
                 file_put_contents(public_path('upload/img/' . time() . $key . '.png'), $data);
 
 

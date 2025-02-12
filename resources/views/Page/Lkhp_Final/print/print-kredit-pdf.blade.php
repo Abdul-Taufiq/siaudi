@@ -366,7 +366,7 @@
                 <thead class="table-primary" style="text-align: left; font-size: 8pt; font-style: italic;">
                     <th>
                         &nbsp; Lembar Konfirmasi ini agar dikembalikan tanggal
-                        {{ $lkhp_final->tgl_pengembalian->translatedFormat('d F Y') }}
+                        {{ $lkhp_final->tgl_pengembalian ? $lkhp_final->tgl_pengembalian->translatedFormat('d F Y') : 'Belum ada data' }}
                     </th>
                 </thead>
                 <tbody>

@@ -162,7 +162,7 @@ $(document).ready(function () {
                             // Menambahkan opsi "Lainnya" dan menandainya sebagai terpilih
                             let lainnyaOption =
                                 document.createElement("option");
-                            lainnyaOption.value = "lainnya";
+                            lainnyaOption.value = "Lainnya";
                             lainnyaOption.text = "Lainnya";
                             lainnyaOption.selected = true;
                             nasabahSelect.appendChild(lainnyaOption);
@@ -175,7 +175,7 @@ $(document).ready(function () {
                         });
                         if (isNamaAoExist) {
                             nama_aoSelect.innerHTML =
-                                '<option value="lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
+                                '<option value="Lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
                             nama_ao.forEach(function (ao) {
                                 var option = document.createElement("option");
                                 option.value = ao.nama;
@@ -187,7 +187,7 @@ $(document).ready(function () {
                             });
                         } else {
                             nama_aoSelect.innerHTML =
-                                '<option selected value="lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
+                                '<option selected value="Lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
                             nama_ao.forEach(function (ao) {
                                 var option = document.createElement("option");
                                 option.value = ao.nama;
@@ -209,7 +209,7 @@ $(document).ready(function () {
                         });
                         if (isNamaanalisExist) {
                             nama_analisSelect.innerHTML =
-                                '<option value="lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
+                                '<option value="Lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
                             nama_analis.forEach(function (analis) {
                                 var option = document.createElement("option");
                                 option.value = analis.nama;
@@ -221,7 +221,7 @@ $(document).ready(function () {
                             });
                         } else {
                             nama_analisSelect.innerHTML =
-                                '<option selected value="lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
+                                '<option selected value="Lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
                             nama_analis.forEach(function (analis) {
                                 var option = document.createElement("option");
                                 option.value = analis.nama;
@@ -244,7 +244,7 @@ $(document).ready(function () {
                         });
                         if (isNamakakomExist) {
                             nama_kakomSelect.innerHTML =
-                                '<option value="lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
+                                '<option value="Lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
                             nama_kakom.forEach(function (kakom) {
                                 var option = document.createElement("option");
                                 option.value = kakom.nama;
@@ -256,7 +256,7 @@ $(document).ready(function () {
                             });
                         } else {
                             nama_kakomSelect.innerHTML =
-                                '<option selected value="lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
+                                '<option selected value="Lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
                             nama_kakom.forEach(function (kakom) {
                                 var option = document.createElement("option");
                                 option.value = kakom.nama;
@@ -279,7 +279,7 @@ $(document).ready(function () {
                         });
                         if (isNamapincabExist) {
                             nama_pincabSelect.innerHTML =
-                                '<option value="lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
+                                '<option value="Lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
                             nama_pincab.forEach(function (pincab) {
                                 var option = document.createElement("option");
                                 option.value = pincab.nama;
@@ -291,7 +291,7 @@ $(document).ready(function () {
                             });
                         } else {
                             nama_pincabSelect.innerHTML =
-                                '<option selected value="lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
+                                '<option selected value="Lainnya">Lainnya</option>'; // Mengosongkan isi elemen select
                             nama_pincab.forEach(function (pincab) {
                                 var option = document.createElement("option");
                                 option.value = pincab.nama;
@@ -585,6 +585,8 @@ $(document).ready(function () {
                     });
                     // Mengisi kembali data nasabah sesuai dengan respons dari server
                     var nama_analis_area = response.nama_analis_area;
+                    console.log(nama_analis_area);
+
                     nama_analis_area.forEach(function (analis_area) {
                         var option = document.createElement("option");
                         option.value = analis_area.nama;
@@ -593,6 +595,8 @@ $(document).ready(function () {
                     });
                     // Mengisi kembali data nasabah sesuai dengan respons dari server
                     var nama_area_manager = response.nama_area_manager;
+                    console.log(nama_area_manager);
+
                     nama_area_manager.forEach(function (area_manager) {
                         var option = document.createElement("option");
                         option.value = area_manager.nama;
@@ -601,6 +605,8 @@ $(document).ready(function () {
                     });
                     // Mengisi kembali data nasabah sesuai dengan respons dari server
                     var nama_manager_bisnis = response.nama_manager_bisnis;
+                    console.log(nama_manager_bisnis);
+
                     nama_manager_bisnis.forEach(function (manager_bisnis) {
                         var option = document.createElement("option");
                         option.value = manager_bisnis.nama;
@@ -609,6 +615,7 @@ $(document).ready(function () {
                     });
                     // Mengisi kembali data nasabah sesuai dengan respons dari server
                     var nama_analis_kpm = response.nama_analis_kpm;
+                    console.log(nama_analis_kpm);
                     nama_analis_kpm.forEach(function (analis_kpm) {
                         var option = document.createElement("option");
                         option.value = analis_kpm.nama;
@@ -617,6 +624,7 @@ $(document).ready(function () {
                     });
                     // Mengisi kembali data nasabah sesuai dengan respons dari server
                     var nama_direksi = response.nama_direksi;
+                    console.log(nama_direksi);
                     nama_direksi.forEach(function (direksi) {
                         var option = document.createElement("option");
                         option.value = direksi.nama;

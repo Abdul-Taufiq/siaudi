@@ -41,13 +41,13 @@
                                         <span class="icon text-white-50">
                                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                         </span>
-                                        <span class="text">Tambah {{ $title }} - Kredit</span>
+                                        <span class="text">Tambah LKHP - Kredit</span>
                                     </a>
                                     <a href="data-lkhp-ops/create" class="btn btn-info btn-icon-split btn-sm">
                                         <span class="icon text-white-50">
                                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                         </span>
-                                        <span class="text">Tambah {{ $title }} - Operasional</span>
+                                        <span class="text">Tambah LKHP - Non-KKPK</span>
                                     </a>
                                     <br>
                                     <br>

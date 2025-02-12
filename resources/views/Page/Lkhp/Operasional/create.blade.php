@@ -56,13 +56,13 @@
 
         /* Mengganti warna border Select2 */
         /* .select2-container--default .select2-selection--single {
-                                                                                                                                                                border-color: red;
-                                                                                                                                                            } */
+                                                                                                                                                                                                                        border-color: red;
+                                                                                                                                                                                                                    } */
 
         /* Opsional: Ganti warna saat select di-focus */
         /* .select2-container--default.select2-container--focus .select2-selection--single {
-                                                                                                                                                                border-color: green;
-                                                                                                                                                            } */
+                                                                                                                                                                                                                        border-color: green;
+                                                                                                                                                                                                                    } */
     </style>
 
     <div class="content-wrapper">
@@ -159,11 +159,11 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="objek_pemeriksaan">Objek Pemeriksaan :</label>
-                                        <select class="form-control form-control-sm border-success" name="objek_pemeriksaan"
-                                            id="objek_pemeriksaan" readonly>
-                                            {{-- <option disabled selected>- Pilih Objek Pemerintahan -</option> --}}
-                                            <option selected value="Operasional">Operasional</option>
-                                            {{-- <option value="Operasional">Operasional</option> --}}
+                                        <select class="form-control form-control-sm input " name="objek_pemeriksaan"
+                                            id="objek_pemeriksaan">
+                                            <option disabled selected>- Pilih Objek Pemerintahan -</option>
+                                            <option value="Kredit">Kredit</option>
+                                            <option value="Operasional">Operasional</option>
                                         </select>
                                     </div>
                                 </div>

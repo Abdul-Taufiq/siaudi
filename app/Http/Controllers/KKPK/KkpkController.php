@@ -189,7 +189,8 @@ class KkpkController extends Controller
             $src = $img->getAttribute('src');
             if (strpos($src, 'base64,') !== false) {
                 $data = base64_decode(explode(',', explode(';', $src)[1])[1]);
-                $image_name = 'upload/img/' . time() . $key . '.png';
+                // $image_name = 'upload/img/' . time() . $key . '.png';
+                $image_name = url('/resource-gambar/' . time() . $key . '.png');
 
                 // Menyimpan gambar ke public_html
                 file_put_contents(public_path($image_name), $data);
@@ -253,7 +254,8 @@ class KkpkController extends Controller
             $src = $img->getAttribute('src');
             if (strpos($src, 'base64,') !== false) {
                 $data = base64_decode(explode(',', explode(';', $src)[1])[1]);
-                $image_name = 'upload/img/' . time() . $key . '.png';
+                // $image_name = 'upload/img/' . time() . $key . '.png';
+                $image_name = url('/resource-gambar/' . time() . $key . '.png');
 
                 // Menyimpan gambar ke public_html
                 file_put_contents(public_path($image_name), $data);
