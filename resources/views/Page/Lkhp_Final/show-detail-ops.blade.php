@@ -210,10 +210,10 @@
                                     </tr>
                                     <tr>
                                         <td>{!! $lkhp_final->komitmen_tindakan !!}</td>
-                                        <td>
+                                        <td style="text-align: center;">
                                             {!! $lkhp_final->komitmen_tgl ? $lkhp_final->komitmen_tgl->translatedFormat('d F Y') : 'Belum ada data' !!}
                                         </td>
-                                        <td>{!! $lkhp_final->penanggung_jawab !!}</td>
+                                        <td style="text-align: center;">{!! $lkhp_final->penanggung_jawab !!}</td>
                                     </tr>
                                 </table>
                             </td>
@@ -244,24 +244,35 @@
                                             <br>
                                             Audit Internal
                                         </td>
-                                        <td style="width: 50%">
-                                            <br><br><br><br><br><br>
-                                            <table class="table table-sm table-borderless" style="width: 100%">
+                                        <td style="width: 60%; text-align: center">
+                                            <table class="table table-sm"
+                                                style="width: 100%; page-break-inside: avoid;">
                                                 <tr>
-                                                    <td style="width: 33%">
+                                                    <td style="width: 33%; text-align: center;">
+                                                        &nbsp;<br><br><br><br>
+                                                    </td>
+                                                    <td style="width: 33%; text-align: center;">
+                                                        &nbsp;<br><br><br><br>
+                                                    </td>
+                                                    <td style="width: 33%; text-align: center;">
+                                                        &nbsp;<br><br><br><br>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width: 33%; text-align: center;">
                                                         <u>{{ $lkhp_final->ttd_kaops ? $lkhp_final->ttd_kaops : 'Belum ada data' }}</u>
                                                     </td>
-                                                    <td style="width: 33%">
+                                                    <td style="width: 33%; text-align: center;">
                                                         <u>{{ $lkhp_final->ttd_kakom ? $lkhp_final->ttd_kakom : 'Belum ada data' }}</u>
                                                     </td>
-                                                    <td style="width: 33%">
+                                                    <td style="width: 33%; text-align: center;">
                                                         <u>{{ $lkhp_final->ttd_pincab ? $lkhp_final->ttd_pincab : 'Belum ada data' }}</u>
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Kasi Operasional</td>
-                                                    <td>Kasi Komersial</td>
-                                                    <td>Pimpinan Cabang</td>
+                                                    <td style="text-align: center;">Kasi Operasional</td>
+                                                    <td style="text-align: center;">Kasi Komersial</td>
+                                                    <td style="text-align: center;">Pimpinan Cabang</td>
                                                 </tr>
                                             </table>
                                         </td>

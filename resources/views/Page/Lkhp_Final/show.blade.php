@@ -56,7 +56,7 @@
 
                                     @switch(auth()->user()->sub_jabatan)
                                         {{-- Kabid IA --}}
-                                        @case('Kabid Internal Audit')
+                                        @case('Kabid Audit Internal')
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
@@ -123,7 +123,7 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="tanggapan_auditee">Tanggapan Auditee :</label>
-                                                        <textarea name="tanggapan_auditee" id="tanggapan_auditee" cols="20" rows="5">
+                                                        <textarea class="summernote" name="tanggapan_auditee" id="tanggapan_auditee" cols="20" rows="5">
                                                             {!! $lkhp->tanggapan_auditee !!}
                                                         </textarea>
                                                     </div>
@@ -131,7 +131,7 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="komitmen_tindakan">Tindakan Penyelesaian :</label>
-                                                        <textarea name="komitmen_tindakan" id="komitmen_tindakan" cols="20" rows="5">
+                                                        <textarea class="summernote" name="komitmen_tindakan" id="komitmen_tindakan" cols="20" rows="5">
                                                             {!! $lkhp->komitmen_tindakan !!}
                                                         </textarea>
                                                     </div>

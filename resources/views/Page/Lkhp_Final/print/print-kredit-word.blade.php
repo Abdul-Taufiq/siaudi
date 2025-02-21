@@ -378,11 +378,11 @@
                                     <td style="width: 20%; text-align: center">Penanggung Jawab</td>
                                 </tr>
                                 <tr>
-                                    <td>{!! $lkhp_final->komitmen_tindakan !!}</td>
-                                    <td>
+                                    <td style="text-align: center;">{!! $lkhp_final->komitmen_tindakan !!}</td>
+                                    <td style="text-align: center;">
                                         {!! $lkhp_final->komitmen_tgl ? $lkhp_final->komitmen_tgl->translatedFormat('d F Y') : 'Belum ada data' !!}
                                     </td>
-                                    <td>{!! $lkhp_final->penanggung_jawab !!}</td>
+                                    <td style="text-align: center;">{!! $lkhp_final->penanggung_jawab !!}</td>
                                 </tr>
                             </table>
                         </td>
@@ -396,7 +396,7 @@
                 <thead class="table-primary" style="text-align: left; font-size: 8pt; font-style: italic;">
                     <th style="text-align: left">
                         Lembar Konfirmasi ini agar dikembalikan tanggal
-                        {{ $lkhp_final->tgl_pengembalian->translatedFormat('d F Y') }}
+                        {{ $lkhp_final->tgl_pengembalian ? $lkhp_final->tgl_pengembalian->translatedFormat('d F Y') : 'Belum ada data' }}
                     </th>
                 </thead>
                 <tbody>

@@ -542,13 +542,21 @@ class LkhpFinalController extends Controller
 
         // return view('Page.Lkhp_Final.show-detail-ops', compact('lkhp_final', 'groupedPivots'));
         if ($lkhp_final->objek_pemeriksaan == 'Kredit') {
-            $pdf = Pdf::loadView('Page.Lkhp_Final.print.print-kredit-pdf', compact('lkhp_final', 'groupedPivots'));
-            $pdf->setPaper('f4', 'portrait');
-            return $pdf->stream('LKHP Final Nomor ' . $lkhp_final->no_lkhp . '.pdf');
+            // $pdf = Pdf::loadView('Page.Lkhp_Final.print.print-kredit-pdf', compact('lkhp_final', 'groupedPivots'));
+            // $pdf->setPaper('f4', 'portrait');
+            // return $pdf->stream('LKHP Final Nomor ' . $lkhp_final->no_lkhp . '.pdf');
+
+            return view('Page.Lkhp_Final.print.print-kredit-pdf', compact('lkhp_final', 'groupedPivots'), [
+                'title' => $lkhp_final->no_lkhp
+            ]);
         } else {
-            $pdf = Pdf::loadView('Page.Lkhp_Final.print.print-ops-pdf', compact('lkhp_final', 'groupedPivots'));
-            $pdf->setPaper('f4', 'portrait');
-            return $pdf->stream('LKHP Final Nomor ' . $lkhp_final->no_lkhp . '.pdf');
+            // $pdf = Pdf::loadView('Page.Lkhp_Final.print.print-ops-pdf', compact('lkhp_final', 'groupedPivots'));
+            // $pdf->setPaper('f4', 'portrait');
+            // return $pdf->stream('LKHP Final Nomor ' . $lkhp_final->no_lkhp . '.pdf');
+
+            return view('Page.Lkhp_Final.print.print-ops-pdf', compact('lkhp_final', 'groupedPivots'), [
+                'title' => $lkhp_final->no_lkhp
+            ]);
         }
     }
 
@@ -569,7 +577,12 @@ class LkhpFinalController extends Controller
         // Determine the appropriate template based on the objek_pemeriksaan
         if ($lkhp_final->objek_pemeriksaan == 'Kredit') {
             # code...
-            $templatePath = 'phpWord/template kredit.docx';
+            // Sesuaikan jalur template berdasarkan lingkungan
+            if (app()->environment('local')) {
+                $templatePath = public_path('phpWord/template kredit.docx');
+            } else {
+                $templatePath = base_path('../public_html/Laravel-public-siaudi/phpWord/template kredit.docx');
+            }
             // Create an instance of TemplateProcessor
             $templateProcessor = new TemplateProcessor($templatePath);
 
@@ -577,15 +590,21 @@ class LkhpFinalController extends Controller
             // parse HTML to xml
             $toOpenXML  = new Parser();
             // $lkhp_uraian = strip_tags($lkhp_final->desc_uraian_permasalahan_fakta); // menghapus semua tag html
-            $lkhp_uraian = $lkhp_final->desc_uraian_permasalahan_fakta;
+            $lkhp_uraian_cek = $lkhp_final->desc_uraian_permasalahan_fakta;
             $lkhp_keadaan = $lkhp_final->desc_keadaan_seharusnya;
             $lkhp_penyebab = $lkhp_final->penyebab_terjadi_penyimpangan;
             $lkhp_dampak = $lkhp_final->dampak_resiko;
             $lkhp_rekomendasi = $lkhp_final->tindak_lanjut;
-            $lkhp_tanggapan = $lkhp_final->tanggapan_auditee;
+            $lkhp_tanggapan_cek = $lkhp_final->tanggapan_auditee;
             $komitmen = $lkhp_final->komitmen_tindakan;
             $penanggung_jawab = $lkhp_final->penanggung_jawab;
             $ttd_pemeriksa = $lkhp_final->ttd_pemeriksa;
+
+            $images = [];
+            $imageIndex = 1; // Untuk placeholder gambar
+            $lkhp_uraian = $this->replaceImagesWithPlaceholders($lkhp_uraian_cek, $images, $imageIndex);
+            $lkhp_tanggapan = $this->replaceImagesWithPlaceholders($lkhp_tanggapan_cek, $images, $imageIndex);
+            // dd($lkhp_uraian);
 
 
             // LKHP
@@ -696,15 +715,20 @@ class LkhpFinalController extends Controller
             // parse HTML to xml
             $toOpenXML  = new Parser();
             // $lkhp_uraian = strip_tags($lkhp_final->desc_uraian_permasalahan_fakta); // menghapus semua tag html
-            $lkhp_uraian = $lkhp_final->desc_uraian_permasalahan_fakta;
+            $lkhp_uraian_cek = $lkhp_final->desc_uraian_permasalahan_fakta;
             $lkhp_keadaan = $lkhp_final->desc_keadaan_seharusnya;
             $lkhp_penyebab = $lkhp_final->penyebab_terjadi_penyimpangan;
             $lkhp_dampak = $lkhp_final->dampak_resiko;
             $lkhp_rekomendasi = $lkhp_final->tindak_lanjut;
-            $lkhp_tanggapan = $lkhp_final->tanggapan_auditee;
+            $lkhp_tanggapan_cek = $lkhp_final->tanggapan_auditee;
             $komitmen = $lkhp_final->komitmen_tindakan;
             $penanggung_jawab = $lkhp_final->penanggung_jawab;
             $ttd_pemeriksa = $lkhp_final->ttd_pemeriksa;
+
+            $images = [];
+            $imageIndex = 1; // Untuk placeholder gambar
+            $lkhp_uraian = $this->replaceImagesWithPlaceholders($lkhp_uraian_cek, $images, $imageIndex);
+            $lkhp_tanggapan = $this->replaceImagesWithPlaceholders($lkhp_tanggapan_cek, $images, $imageIndex);
 
 
             // LKHP
@@ -782,17 +806,49 @@ class LkhpFinalController extends Controller
             }
         }
 
-
-
-
-
-
         // Simpan atau unduh dokumen yang telah diproses
-        $fileName = 'LKHP_' . now()->format('YmdHis') . '.docx';
-        $filePath = ('phpWord/' . $fileName);
-        $templateProcessor->saveAs($filePath);
+        $fileExam = 'LKHP_' . now()->format('YmdHi') . '.docx';
+        $filePathExam = ('phpWord/' . $fileExam);
+        $templateProcessor->saveAs($filePathExam);
 
-        // Kembalikan response (misalnya, untuk mendownload file)
+        // disini harus ada pengecekan jika ada tag img jalankan dibawah ini
+
+        // setelah koreksi jika ada tag img maka lakukan proses kedua ini
+        if (!empty($images)) {
+            $secondTemplates = new TemplateProcessor($filePathExam);
+
+            // tanpa import style image
+            // foreach ($images as $placeholder => $imagePath) {
+            //     $secondTemplates->setImageValue($placeholder, [
+            //         'path' => $imagePath, // image name sesuai dengan isi dari database
+            //         'width' => 650,
+            //         'height' => 650,
+            //         'ratio' => true,
+            //     ]);
+            // }
+
+            // dengan style image
+            foreach ($images as $placeholder => $imageData) {
+                $secondTemplates->setImageValue($placeholder, [
+                    'path' => $imageData['path'], // Path lokal gambar
+                    'width' => $imageData['width'], // Gunakan width dari style
+                    'height' => $imageData['width'], // Tetapkan height sama dengan width agar square
+                    'ratio' => true,
+                ]);
+            }
+
+            $fileName = 'LKHP_' . now()->format('YmdHi') . '.docx';
+            $filePath = 'phpWord/' . $fileName;
+
+            $secondTemplates->saveAs($filePath);
+        } else {
+            // Jika tidak ada gambar, fileExam langsung dijadikan file utama
+            $filePath = $filePathExam;
+        }
+
+        // jika tidak ada tag img maka jalankan ini
+        // hapus file $fileExam yang tersimpan
+        // Kemudian Kembalikan response (misalnya, untuk mendownload file)
         return response()->download($filePath)->deleteFileAfterSend(true);
     }
 
@@ -814,8 +870,8 @@ class LkhpFinalController extends Controller
                 'ttd_pincab' => $request->ttd_pincab,
             ]);
         } else {
-            $komiten = $this->SummernoteImg($request->komitmen_tindakan);
             $tanggapan_auditee = $this->SummernoteImg($request->tanggapan_auditee);
+            $komiten = $this->SummernoteImg($request->komitmen_tindakan);
 
             $lkhp->update([
                 'tanggapan_auditee' => $tanggapan_auditee,
@@ -829,7 +885,7 @@ class LkhpFinalController extends Controller
     }
 
 
-    // summernote
+    // fungsi handle summernote img
     private function SummernoteImg($html)
     {
         if (empty($html)) {
@@ -846,13 +902,14 @@ class LkhpFinalController extends Controller
                 list(, $data) = explode(',', $data);
                 $data = base64_decode($data);
 
-                $image_name = '/upload/img/' . time() . $key . '.png';
+                // $image_name = '/upload/img/' . time() . $key . '.png';
+                $image_name = url('/resource-gambar/' . time() . $key . '.png');
                 // file_put_contents(public_path() . $image_name, $data);
-
                 file_put_contents(public_path('upload/img/' . time() . $key . '.png'), $data);
+                $src = url('/upload/img/' . time() . $key . '.png');
 
                 $img->removeAttribute('src');
-                $img->setAttribute('src', $image_name);
+                $img->setAttribute('src', $src);
             }
         }
 
@@ -941,4 +998,77 @@ class LkhpFinalController extends Controller
             });
         }
     }
+
+
+
+    // Fungsi untuk mengganti tag <img> dengan placeholder dengan stylenya
+    function replaceImagesWithPlaceholders($html, &$images, &$imageIndex)
+    {
+        return preg_replace_callback('/<img[^>]+src=["\']([^"\']+)["\'][^>]*style=["\']([^"\']*)["\'][^>]*>/', function ($matches) use (&$images, &$imageIndex) {
+            $src = $matches[1];
+            $style = $matches[2]; // Style inline dari tag <img>
+
+            // Ambil nilai width dari style="width: xxxpx;"
+            // Ambil nilai width dari style="width: xxxpx;"
+            $width = 650; // Default width jika tidak ditemukan
+            if (preg_match('/width:\s*(\d+)px;?/', $style, $widthMatch)) {
+                $width = (int) $widthMatch[1]; // Ambil nilai width jika ditemukan
+            }
+
+            if (app()->environment('local')) {
+                $imagePath = public_path(str_replace(url('/'), '', $src));
+            } else {
+                // Sesuaikan dengan jalur folder Anda untuk production, karena phpword tidak bisa membaca gambar dari URL
+                $imagePath = base_path(str_replace(url('/resource-gambar'), '', 'public/upload/img' . $src));
+            }
+
+
+            if (file_exists($imagePath)) {
+                $placeholder = "img_{$imageIndex}";
+                $changePlaceholder = "{" . $placeholder . "}";
+                // $images[$placeholder] = $imagePath;
+                // Simpan path gambar & width ke dalam array
+                $images[$placeholder] = [
+                    'path' => $imagePath,
+                    'width' => $width
+                ];
+                $imageIndex++;
+
+                // Ganti tag <img> dengan placeholder tanpa mengubah format lain
+                return "<br>\${$changePlaceholder}<br>";
+            }
+
+            return $matches[0]; // Jika gambar tidak ditemukan, tetap gunakan tag asli
+        }, $html);
+    }
+
+
+
+    // Fungsi untuk mengganti tag <img> dengan placeholder tanpa menginport style nya
+    // function replaceImagesWithPlaceholders($html, &$images, &$imageIndex)
+    // {
+    //     return preg_replace_callback('/<img[^>]+src=["\']([^"\']+)["\'][^>]*>/', function ($matches) use (&$images, &$imageIndex) {
+    //         $src = $matches[1];
+    //         // $imagePath = public_path(str_replace(url('/'), '', $src));
+    //         if (app()->environment('local')) {
+    //             $imagePath = public_path(str_replace(url('/'), '', $src));
+    //         } else {
+    //             $imagePath = base_path(str_replace(url('/resource-gambar'), '', 'public/upload/img' . $src)); // Sesuaikan dengan jalur folder Anda
+    //         }
+
+    //         // dd($imagePath);
+
+    //         if (!empty($imagePath)) {
+    //             $placeholder = "img_{$imageIndex}";
+    //             $changePlaceholder = "{" . $placeholder . "}";
+    //             $images[$placeholder] = $imagePath;
+    //             $imageIndex++;
+
+    //             // Ganti tag <img> dengan placeholder tanpa mengubah format lain
+    //             return "<br>\${$changePlaceholder}<br>";
+    //         }
+
+    //         return $matches[0]; // Jika gambar tidak ditemukan, tetap gunakan tag asli
+    //     }, $html);
+    // }
 }

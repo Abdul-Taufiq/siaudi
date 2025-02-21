@@ -54,7 +54,7 @@
 
                                     @switch(auth()->user()->sub_jabatan)
                                         {{-- Kabid IA --}}
-                                        @case('Kabid Internal Audit')
+                                        @case('Kabid Audit Internal')
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
