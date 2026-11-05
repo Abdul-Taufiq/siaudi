@@ -118,6 +118,9 @@ class DebiturController extends Controller
         $fullPath = public_path('file_upload/Debitur/' . $namaFile);
         Excel::import(new ImportDebitur(request()->cabang), $fullPath);
 
+        // hapus file setelah di simpan
+        unlink($fullPath);
+
         // log Act
         $aksi = "(+) Tambah Data Debitur (File Excel) dengan Nama File: " . $namaFile;
         $this->logAct($aksi);

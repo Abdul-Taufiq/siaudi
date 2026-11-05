@@ -117,14 +117,6 @@ function FlexRE() {
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="desc_keadaan_seharusnya_${count_one}">Desc Keadaan Seharusnya
-                                            :</label>
-                                        <textarea class="summernote" name="desc_keadaan_seharusnya_${count_one}" id="desc_keadaan_seharusnya_${count_one}" cols="20"
-                                            rows="5"></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group">
                                         <label for="penyebab_terjadi_penyimpangan_${count_one}">Penyebab Terjadinya
                                             Penyimpangan
                                             :</label>
@@ -167,7 +159,7 @@ function FlexRE() {
         AddImage(count_one, 1);
         // config summernote
         configSummernote(
-            `#keterangan_re_${count_one}_1, #desc_uraian_permasalahan_fakta_${count_one}, #desc_keadaan_seharusnya_${count_one}, #penyebab_terjadi_penyimpangan_${count_one}, #dampak_resiko_${count_one}, #tindak_lanjut_${count_one}`
+            `#keterangan_re_${count_one}_1, #desc_uraian_permasalahan_fakta_${count_one}, #penyebab_terjadi_penyimpangan_${count_one}, #dampak_resiko_${count_one}, #tindak_lanjut_${count_one}`,
         );
 
         // config Input

@@ -105,20 +105,18 @@ class LkhpController extends Controller
                         // Cek apakah user memiliki hak akses untuk mengedit atau menghapus
                         if (auth()->user()->sub_jabatan == 'Kabid Audit Internal' || auth()->user()->nama == $data->nama_creator) {
                             // cek apakah kkpk udah ditambahkan ke LKHP atau belum if yes maka button off
+                            // Tombol edit
+                            $button .= '<a href="/data-lkhp-ops/' . encrypt($data->id_lkhp)  . '/edit" 
+                            class="btn btn-warning btn-sm edit">
+                            <i class="fa fa-edit"></i></a>';
+                            $button .= '&nbsp;';
+                            // Tombol hapus
                             if ($data->status == null) {
-                                // Tombol edit
-                                $button .= '<a href="/data-lkhp-ops/' . encrypt($data->id_lkhp)  . '/edit" 
-                                                class="btn btn-warning btn-sm edit">
-                                                <i class="fa fa-edit"></i></a>';
-                                $button .= '&nbsp;';
-                                // Tombol hapus
                                 $button .= '<a data-toggle="modal" id="' . $data->id_lkhp  . '"
                                                 class="hapus btn btn-danger btn-sm delete-post ">
                                                 <i class="fa fa-trash"></i></a>';
                             } else {
                                 // Jika tidak memenuhi kondisi, tambahkan kelas disabled pada tombol
-                                $button .= '<a class="btn btn-warning btn-sm edit disabled"><i class="fa fa-edit"></i></a>';
-                                $button .= '&nbsp;';
                                 $button .= '<a class="delete btn btn-danger btn-sm delete-post disabled"><i class="fa fa-trash"></i></a>';
                             }
                         } else {
@@ -140,20 +138,18 @@ class LkhpController extends Controller
                         // Cek apakah user memiliki hak akses untuk mengedit atau menghapus
                         if (auth()->user()->sub_jabatan == 'Kabid Audit Internal' || auth()->user()->nama == $data->nama_creator) {
                             // cek apakah kkpk udah ditambahkan ke LKHP atau belum if yes maka button off
+                            // Tombol edit
+                            $button .= '<a href="/data-lkhp/' . encrypt($data->id_lkhp)  . '/edit" 
+                                    class="btn btn-warning btn-sm edit">
+                                    <i class="fa fa-edit"></i></a>';
+                            $button .= '&nbsp;';
+                            // Tombol hapus
                             if ($data->status == null) {
-                                // Tombol edit
-                                $button .= '<a href="/data-lkhp/' . encrypt($data->id_lkhp)  . '/edit" 
-                                                class="btn btn-warning btn-sm edit">
-                                                <i class="fa fa-edit"></i></a>';
-                                $button .= '&nbsp;';
-                                // Tombol hapus
                                 $button .= '<a data-toggle="modal" id="' . $data->id_lkhp  . '"
                                                 class="hapus btn btn-danger btn-sm delete-post ">
                                                 <i class="fa fa-trash"></i></a>';
                             } else {
                                 // Jika tidak memenuhi kondisi, tambahkan kelas disabled pada tombol
-                                $button .= '<a class="btn btn-warning btn-sm edit disabled"><i class="fa fa-edit"></i></a>';
-                                $button .= '&nbsp;';
                                 $button .= '<a class="delete btn btn-danger btn-sm delete-post disabled"><i class="fa fa-trash"></i></a>';
                             }
                         } else {
@@ -177,7 +173,7 @@ class LkhpController extends Controller
 
     public function getKKPK($Id)
     {
-        $data = Kkpk::where('id_cabang', $Id)->where('nama_pemeriksa', auth()->user()->nama)->get();
+        $data = Kkpk::with('debitur')->where('id_cabang', $Id)->where('nama_pemeriksa', auth()->user()->nama)->get();
         return response()->json([
             'status' => 200,
             'data' => $data
@@ -267,7 +263,7 @@ class LkhpController extends Controller
 
             // convert u/ summernote
             $desc_uraian = $this->SummernoteImg($request->input('desc_uraian_permasalahan_fakta_' . $re));
-            $desc_keadaan = $this->SummernoteImg($request->input('desc_keadaan_seharusnya_' . $re));
+            // $desc_keadaan = $this->SummernoteImg($request->input('desc_keadaan_seharusnya_' . $re));
             $penyebab_penyimpangan = $this->SummernoteImg($request->input('penyebab_terjadi_penyimpangan_' . $re));
             $dampak_resiko = $this->SummernoteImg($request->input('dampak_resiko_' . $re));
             $tindak_lanjut = $this->SummernoteImg($request->input('tindak_lanjut_' . $re));
@@ -281,7 +277,7 @@ class LkhpController extends Controller
                     'objek_pemeriksaan' => $request->objek_pemeriksaan,
                     'no_lkhp_bayangan' => $nomer,
                     'desc_uraian_permasalahan_fakta' => $desc_uraian,
-                    'desc_keadaan_seharusnya' => $desc_keadaan,
+                    // 'desc_keadaan_seharusnya' => $desc_keadaan,
                     'penyebab_terjadi_penyimpangan' => $penyebab_penyimpangan,
                     'dampak_resiko' => $dampak_resiko,
                     'tindak_lanjut' => $tindak_lanjut,
@@ -386,7 +382,7 @@ class LkhpController extends Controller
             'tgl_awal' => Carbon::createFromFormat('d-m-Y', $request->tgl_awal)->format('Y-m-d'),
             'tgl_akhir' => Carbon::createFromFormat('d-m-Y', $request->tgl_akhir)->format('Y-m-d'),
             'desc_uraian_permasalahan_fakta' => $request->desc_uraian_permasalahan_fakta,
-            'desc_keadaan_seharusnya' => $request->desc_keadaan_seharusnya,
+            // 'desc_keadaan_seharusnya' => $request->desc_keadaan_seharusnya,
             'penyebab_terjadi_penyimpangan' => $request->penyebab_terjadi_penyimpangan,
             'dampak_resiko' => $request->dampak_resiko,
             'tindak_lanjut' => $request->tindak_lanjut
@@ -405,6 +401,24 @@ class LkhpController extends Controller
         // log Act
         $aksi = "(-) Hapus Data LKHP Nomor: " . $lkhp->no_lkhp_bayangan;
         $this->logAct($aksi);
+
+        $pivot = Pivot::where('id_lkhp', $lkhp->id_lkhp)->first();
+        $folderName = str_replace('/', '_', $lkhp->no_lkhp_bayangan);
+        $folderPath = public_path('gambar/Gambar Pendukung LK - ' . $folderName);
+
+        foreach ($pivot->pivotImg as $pivotimg) {
+            $path = $folderPath . '/' . $pivotimg->img;
+            if (file_exists($path)) {
+                unlink($path);
+            }
+
+            $pivotimg->delete();
+        }
+
+        // hapus folder jika masih ada
+        if (is_dir($folderPath) && count(scandir($folderPath)) == 2) {
+            rmdir($folderPath);
+        }
 
         $lkhp->delete();
     }
@@ -517,7 +531,7 @@ class LkhpController extends Controller
                 if (!is_null($keterangan_re)) {
                     // Update Pivot untuk Keterangan dan RE
                     $item->update([
-                        'keterangan_re' => $keterangan_re
+                        'keterangan_re' => $this->SummernoteImg($keterangan_re)
                     ]);
                 }
             }
@@ -526,8 +540,8 @@ class LkhpController extends Controller
             foreach ($item->pivotImg as $pivotimg) {
                 for ($aksi_img = 1; $aksi_img < 10; $aksi_img++) {
                     # kondisi update img
-                    $image = $request->file('img_re_old_' . $aksi_re . '_' . $aksi_img);
-                    if ($request->input('aksi_gambar_' . $aksi_re . '_' . $aksi_img) != 'Hapus') {
+                    $image = $request->file('img_re_old_' . $aksi_img . '_' . $aksi_img);
+                    if ($request->input('aksi_gambar_' . $aksi_img . '_' . $aksi_img) != 'Hapus') {
                         if ($image != null) {
                             // config gambar
                             $gambar = $image;
@@ -536,12 +550,24 @@ class LkhpController extends Controller
                             $folderName = str_replace('/', '_', $pivot_tunggal->lkhp->no_lkhp_bayangan);
                             $gambar->move('gambar/Gambar Pendukung LK - ' . $folderName, $fileName);
 
+                            $path = public_path('gambar/Gambar Pendukung LK - ' . $folderName . '/' . $pivotimg->img);
+
+                            if (file_exists($path)) {
+                                unlink($path);
+                            }
+
                             $pivotimg->update([
                                 'img' => $fileName,
                                 'caption' => $request->input('caption_re_old_' . $aksi_re . '_' . $aksi_img),
                             ]);
                         }
                     } else {
+                        $folderName = str_replace('/', '_', $pivot_tunggal->lkhp->no_lkhp_bayangan);
+                        $path = public_path('gambar/Gambar Pendukung LK - ' . $folderName . '/' . $pivotimg->img);
+
+                        if (file_exists($path)) {
+                            unlink($path);
+                        }
                         $pivotimg->delete();
                     }
                 }
@@ -590,6 +616,19 @@ class LkhpController extends Controller
         $aksi = "(-) Hapus Data KKPK dari LKHP Nomor: " . $pivot->lkhp->no_lkhp_bayangan;
         $this->logAct($aksi);
 
+        # foreach untuk update pivot IMG
+        foreach ($pivot as $item) {
+            foreach ($item->pivotImg as $pivotimg) {
+                $folderName = str_replace('/', '_', $pivot->lkhp->no_lkhp_bayangan);
+                $path = public_path('gambar/Gambar Pendukung LK - ' . $folderName . '/' . $pivotimg->img);
+
+                if (file_exists($path)) {
+                    unlink($path);
+                }
+                $pivotimg->delete();
+            }
+        }
+
         $pivot->delete();
     }
 
@@ -602,7 +641,7 @@ class LkhpController extends Controller
             return $html;
         }
         $dom = new DOMDocument();
-        $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        @$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
         $images = $dom->getElementsByTagName('img');
         foreach ($images as $key => $img) {
@@ -612,12 +651,14 @@ class LkhpController extends Controller
                 list(, $data) = explode(',', $data);
                 $data = base64_decode($data);
 
-                $image_name = '/upload/img/' . time() . $key . '.png';
+                // $image_name = '/upload/img/' . time() . $key . '.png';
+                $image_name = url('/resource-gambar/' . time() . $key . '.png');
                 // file_put_contents(public_path() . $image_name, $data);
                 file_put_contents(public_path('upload/img/' . time() . $key . '.png'), $data);
+                $src = url($image_name);
 
                 $img->removeAttribute('src');
-                $img->setAttribute('src', $image_name);
+                $img->setAttribute('src', $src);
             }
         }
 

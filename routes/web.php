@@ -146,4 +146,10 @@ Route::group(['middleware' => ['permission']], function () {
 
     // example
     Route::post('/import-excel', [EmployeeController::class, 'store']);
+
+    Route::get('/resource-gambar/{img}', function ($img) {
+        return response()->file(
+            public_path('upload/img/' . $img)
+        );
+    });
 });

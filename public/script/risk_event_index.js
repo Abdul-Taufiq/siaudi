@@ -90,12 +90,10 @@ function loadtable(min, max, cari) {
                 {
                     data: "sub_activity",
                     name: "sub_activity",
-                    searchable: false,
                 },
                 {
                     data: "list_finding",
                     name: "list_finding",
-                    searchable: false,
                 },
                 {
                     data: "indikasi_resiko",

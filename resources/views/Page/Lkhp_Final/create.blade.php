@@ -219,14 +219,14 @@
                                     </div>
                                     <hr>
                                 </div>
-                                <div class="col-md-12">
+                                {{-- <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="desc_keadaan_seharusnya">Desc Keadaan Seharusnya
                                             :</label>
                                         <textarea name="desc_keadaan_seharusnya" id="desc_keadaan_seharusnya" cols="20" rows="5"></textarea>
                                     </div>
                                     <hr>
-                                </div>
+                                </div> --}}
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="penyebab_terjadi_penyimpangan">Penyebab Terjadinya

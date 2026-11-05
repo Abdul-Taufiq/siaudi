@@ -8,7 +8,7 @@ $(document).ready(function () {
 function KkpkFromCabang(count_one, count_two) {
     let cabangSelect = document.getElementById("id_cabang");
     let kkpkSelect = document.getElementById(
-        `id_kkpk_${count_one}_${count_two}`
+        `id_kkpk_${count_one}_${count_two}`,
     );
     cabangSelect.addEventListener("change", function () {
         let cabangId = cabangSelect.value;
@@ -33,7 +33,7 @@ function KkpkFromCabang(count_one, count_two) {
                     option.text =
                         kkpk.kode_kkpk +
                         " → (" +
-                        kkpk.nama_pemeriksa +
+                        kkpk.debitur.nama_nasabah +
                         ") → Tgl Pemeriksaan: " +
                         moment(kkpk.tgl_pemeriksaan)
                             .locale("id")
@@ -64,20 +64,20 @@ function DetailNasabah(count_one, count_two) {
                 let nasabahData = response.data;
                 // console.log(nasabahData);
                 $(`#nama_debitur_${count_one}_${count_two}`).text(
-                    nasabahData.nama_nasabah
+                    nasabahData.nama_nasabah,
                 );
                 $(`#no_rekening_${count_one}_${count_two}`).text(
-                    nasabahData.no_rekening
+                    nasabahData.no_rekening,
                 );
                 $(`#jkw_${count_one}_${count_two}`).text(nasabahData.jkw);
                 $(`#status_${count_one}_${count_two}`).text(
-                    nasabahData.kol + "/" + nasabahData.dpd
+                    nasabahData.kol + "/" + nasabahData.dpd,
                 );
                 $(`#tgl_realisasi_${count_one}_${count_two}`).text(
-                    moment(nasabahData.tgl_realisasi).locale("id").format("LL")
+                    moment(nasabahData.tgl_realisasi).locale("id").format("LL"),
                 );
                 $(`#tgl_jth_tempo_${count_one}_${count_two}`).text(
-                    moment(nasabahData.tgl_jth_tempo).locale("id").format("LL")
+                    moment(nasabahData.tgl_jth_tempo).locale("id").format("LL"),
                 );
 
                 // Rupiah plafon
@@ -97,7 +97,7 @@ function DetailNasabah(count_one, count_two) {
                 // kkpk keterangan
                 let kkpk_catatan = response.catatan;
                 let catatan = document.getElementById(
-                    `catatan_${count_one}_${count_two}`
+                    `catatan_${count_one}_${count_two}`,
                 );
                 catatan.innerHTML = "";
                 let span = document.createElement("span");

@@ -12,27 +12,14 @@
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
     <style>
-        @page {
-            size: 216mm 330mm;
-            margin: 15mm 10mm 10mm 15mm;
-            font-family: Tahoma, sans-serif;
-            text-align: justify;
-            font-size: 10pt;
-        }
-
         body {
-            margin: 5mm 0mm 10mm 5mm;
-            font-family: Tahoma, sans-serif;
-            text-align: justify;
-            font-size: 9pt;
-        }
+            /* font-family: "Times New Roman", Times, serif; */
+            margin: 2.8cm 1cm 1.5cm 1.7cm;
+            font-size: 12pt;
+            text-align: justify !important;
+            line-height: 14pt;
+            letter-spacing: 0.5px;
 
-        table td {
-            vertical-align: top;
-            text-align: justify;
-            page-break-before: avoid;
-            page-break-after: avoid;
-            page-break-inside: avoid;
         }
 
         h3 {
@@ -42,6 +29,13 @@
         .logo {
             width: 65px;
             height: auto;
+        }
+
+        header {
+            display: block;
+            position: fixed;
+            width: 87%;
+            top: 10px;
         }
     </style>
 </head>
@@ -246,12 +240,18 @@
                                                 <td style="width: 49%; border: none;">
                                                     <table style="width: 100%; border: none;" class="table table-sm">
                                                         <tr>
-                                                            <td style="width: 40%; border: none;">Plafond/Baki Debet
+                                                            <td style="width: 40%; border: none;">Plafond
                                                             </td>
                                                             <td style="width: 1%; border: none;">:</td>
                                                             <td style="border: none">
                                                                 {{ $pivot->kkpk->debitur->plafon ? 'Rp ' . number_format($pivot->kkpk->debitur->plafon, 0, ',', '.') : 'Belum ada data' }}
-                                                                /
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="width: 40%; border: none;">Baki Debet
+                                                            </td>
+                                                            <td style="width: 1%; border: none;">:</td>
+                                                            <td style="border: none">
                                                                 {{ $pivot->kkpk->debitur->baki_debet ? 'Rp ' . number_format($pivot->kkpk->debitur->baki_debet, 0, ',', '.') : 'Belum ada data' }}
                                                             </td>
                                                         </tr>
@@ -450,9 +450,9 @@
         {{-- footer --}}
         <script type="text/php">
             if (isset($pdf)) {
-                $x = 500;
+                $x = 400;
                 $y = 900;
-                $text = "Halaman {PAGE_NUM} dari {PAGE_COUNT}";
+                $text = "PT BPR KUSUMA SUMBING {PAGE_NUM} / {PAGE_COUNT}";
                 $font = null;
                 $size = 10;
                 $color = array(0,0,0);

@@ -215,7 +215,7 @@ class LkhpFinalController extends Controller
             ->whereHas('pivot', function ($query) {
                 $query->whereNull('id_lkhp_final');
             })
-            ->with(['pivot.riskEvent'])
+            ->with(['pivot.riskEvent', 'pivot.kkpk.debitur'])
             ->get();
 
 
@@ -230,7 +230,7 @@ class LkhpFinalController extends Controller
     {
         // convert u/ summernote
         $desc_uraian = $this->SummernoteImg($request->desc_uraian_permasalahan_fakta);
-        $desc_keadaan = $this->SummernoteImg($request->desc_keadaan_seharusnya);
+        // $desc_keadaan = $this->SummernoteImg($request->desc_keadaan_seharusnya);
         $penyebab_penyimpangan = $this->SummernoteImg($request->penyebab_terjadi_penyimpangan);
         $dampak_resiko = $this->SummernoteImg($request->dampak_resiko);
         $tindak_lanjut = $this->SummernoteImg($request->tindak_lanjut);
@@ -244,12 +244,11 @@ class LkhpFinalController extends Controller
             'objek_pemeriksaan' => $request->objek_pemeriksaan,
             'ttd_pemeriksa' => $request->ttd_pemeriksa,
             'desc_uraian_permasalahan_fakta' => $desc_uraian,
-            'desc_keadaan_seharusnya' => $desc_keadaan,
+            // 'desc_keadaan_seharusnya' => $desc_keadaan,
             'penyebab_terjadi_penyimpangan' => $penyebab_penyimpangan,
             'dampak_resiko' => $dampak_resiko,
             'tindak_lanjut' => $tindak_lanjut,
             'nama_creator' => auth()->user()->nama,
-            'ttd_pemeriksa' => $request->ttd_pemeriksa
         ]);
 
         for ($i = 1; $i <= 100; $i++) {
@@ -345,7 +344,7 @@ class LkhpFinalController extends Controller
     {
         // convert u/ summernote
         $desc_uraian = $this->SummernoteImg($request->desc_uraian_permasalahan_fakta);
-        $desc_keadaan = $this->SummernoteImg($request->desc_keadaan_seharusnya);
+        // $desc_keadaan = $this->SummernoteImg($request->desc_keadaan_seharusnya);
         $penyebab_penyimpangan = $this->SummernoteImg($request->penyebab_terjadi_penyimpangan);
         $dampak_resiko = $this->SummernoteImg($request->dampak_resiko);
         $tindak_lanjut = $this->SummernoteImg($request->tindak_lanjut);
@@ -357,7 +356,7 @@ class LkhpFinalController extends Controller
         $lkhpFinal->objek_pemeriksaan = $request->objek_pemeriksaan;
         $lkhpFinal->ttd_pemeriksa = $request->ttd_pemeriksa;
         $lkhpFinal->desc_uraian_permasalahan_fakta = $desc_uraian;
-        $lkhpFinal->desc_keadaan_seharusnya = $desc_keadaan;
+        // $lkhpFinal->desc_keadaan_seharusnya = $desc_keadaan;
         $lkhpFinal->penyebab_terjadi_penyimpangan = $penyebab_penyimpangan;
         $lkhpFinal->dampak_resiko = $dampak_resiko;
         $lkhpFinal->tindak_lanjut = $tindak_lanjut;
@@ -561,294 +560,189 @@ class LkhpFinalController extends Controller
     }
 
 
+    // PRINT
     public function printLkhpAsWord($id)
     {
         $ids = Crypt::decrypt($id);
         $lkhp_final = LkhpFinal::with(['pivot.pivotImg'])
             ->where('id_lkhp_final', $ids)
             ->first();
-        // Grouping pivots by id_event_risk
+
         $groupedPivots = $lkhp_final->pivot->groupBy('id_event_risk');
 
-        // log activity
+        // Log activity
         $aksi = "(+) Print As Word LKHP Final Nomor: " . $lkhp_final->no_lkhp;
         $this->logAct($aksi);
 
-        // Determine the appropriate template based on the objek_pemeriksaan
+        // Template Path
         if ($lkhp_final->objek_pemeriksaan == 'Kredit') {
-            # code...
-            // Sesuaikan jalur template berdasarkan lingkungan
             if (app()->environment('local')) {
                 $templatePath = public_path('phpWord/template kredit.docx');
             } else {
                 $templatePath = base_path('../public_html/Laravel-public-siaudi/phpWord/template kredit.docx');
             }
-            // Create an instance of TemplateProcessor
-            $templateProcessor = new TemplateProcessor($templatePath);
+        } else {
+            if (app()->environment('local')) {
+                $templatePath = public_path('phpWord/template operasional.docx');
+            } else {
+                $templatePath = base_path('../public_html/Laravel-public-siaudi/phpWord/template operasional.docx');
+            }
+        }
 
-            // value untuk mengisi template
-            // parse HTML to xml
-            $toOpenXML  = new Parser();
-            // $lkhp_uraian = strip_tags($lkhp_final->desc_uraian_permasalahan_fakta); // menghapus semua tag html
-            $lkhp_uraian_cek = $lkhp_final->desc_uraian_permasalahan_fakta;
-            $lkhp_keadaan = $lkhp_final->desc_keadaan_seharusnya;
-            $lkhp_penyebab = $lkhp_final->penyebab_terjadi_penyimpangan;
-            $lkhp_dampak = $lkhp_final->dampak_resiko;
-            $lkhp_rekomendasi = $lkhp_final->tindak_lanjut;
-            $lkhp_tanggapan_cek = $lkhp_final->tanggapan_auditee;
-            $komitmen = $lkhp_final->komitmen_tindakan;
-            $penanggung_jawab = $lkhp_final->penanggung_jawab;
-            $ttd_pemeriksa = $lkhp_final->ttd_pemeriksa;
+        $templateProcessor = new TemplateProcessor($templatePath);
+        $toOpenXML = new Parser();
 
-            $images = [];
-            $imageIndex = 1; // Untuk placeholder gambar
-            $lkhp_uraian = $this->replaceImagesWithPlaceholders($lkhp_uraian_cek, $images, $imageIndex);
-            $lkhp_tanggapan = $this->replaceImagesWithPlaceholders($lkhp_tanggapan_cek, $images, $imageIndex);
-            // dd($lkhp_uraian);
+        // Data HTML dari DB
+        $lkhp_uraian_cek    = $lkhp_final->desc_uraian_permasalahan_fakta;
+        $lkhp_penyebab      = $lkhp_final->penyebab_terjadi_penyimpangan;
+        $lkhp_dampak        = $lkhp_final->dampak_resiko;
+        $lkhp_rekomendasi   = $lkhp_final->tindak_lanjut;
+        $lkhp_tanggapan_cek = $lkhp_final->tanggapan_auditee;
+        $komitmen           = $lkhp_final->komitmen_tindakan;
+        $penanggung_jawab   = $lkhp_final->penanggung_jawab;
+        $ttd_pemeriksa      = $lkhp_final->ttd_pemeriksa;
 
+        // Proses replace <img> di HTML menjadi placeholder ${img_N}
+        $images = [];
+        $imageIndex = 1;
+        $lkhp_uraian    = $this->replaceImagesWithPlaceholders($lkhp_uraian_cek, $images, $imageIndex);
+        $lkhp_tanggapan = $this->replaceImagesWithPlaceholders($lkhp_tanggapan_cek, $images, $imageIndex);
 
-            // LKHP
-            $tgl_pengembalian = $lkhp_final->tgl_pengembalian ? $lkhp_final->tgl_pengembalian->translatedFormat('d F Y') : 'Data kosong';
-            $templateProcessor->setValue('kc', $lkhp_final->cabang->cabang);
-            $templateProcessor->setValue('tgl_pemeriksaan', $lkhp_final->tgl_awal->translatedFormat('d') . ' s/d ' . $lkhp_final->tgl_akhir->translatedFormat('d F Y'));
-            $templateProcessor->setValue('no_lkhp', $lkhp_final->no_lkhp);
-            $templateProcessor->setValue('lkhp_uraian', $toOpenXML->fromHTML($lkhp_uraian));
-            $templateProcessor->setValue('lkhp_keadaan', $toOpenXML->fromHTML($lkhp_keadaan));
-            $templateProcessor->setValue('lkhp_penyebab', $toOpenXML->fromHTML($lkhp_penyebab));
-            $templateProcessor->setValue('lkhp_dampak', $toOpenXML->fromHTML($lkhp_dampak));
-            $templateProcessor->setValue('lkhp_rekomendasi', $toOpenXML->fromHTML($lkhp_rekomendasi));
-            $templateProcessor->setValue('lkhp_tanggapan', $toOpenXML->fromHTML($lkhp_tanggapan));
-            $templateProcessor->setValue('lkhp_komitmen', $toOpenXML->fromHTML($komitmen));
-            $templateProcessor->setValue('lkhp_komitmen', $toOpenXML->fromHTML($komitmen));
+        // Set Values Utama
+        $tgl_pengembalian = $lkhp_final->tgl_pengembalian ? $lkhp_final->tgl_pengembalian->translatedFormat('d F Y') : 'Data kosong';
+        $templateProcessor->setValue('kc', $lkhp_final->cabang->cabang);
+        $templateProcessor->setValue('tgl_pemeriksaan', $lkhp_final->tgl_awal->translatedFormat('d') . ' s/d ' . $lkhp_final->tgl_akhir->translatedFormat('d F Y'));
+        $templateProcessor->setValue('no_lkhp', $lkhp_final->no_lkhp);
 
-            $templateProcessor->setValue('lkhp_tgl_kom', $lkhp_final->komitmen_tgl ? $lkhp_final->komitmen_tgl->translatedFormat('d F Y') : 'belum ada data');
+        // Parse HTML hasil penyesuaian gambar ke XML Word
+        $templateProcessor->setValue('lkhp_uraian', $toOpenXML->fromHTML($lkhp_uraian));
+        $templateProcessor->setValue('lkhp_penyebab', $toOpenXML->fromHTML($lkhp_penyebab));
+        $templateProcessor->setValue('lkhp_dampak', $toOpenXML->fromHTML($lkhp_dampak));
+        $templateProcessor->setValue('lkhp_rekomendasi', $toOpenXML->fromHTML($lkhp_rekomendasi));
+        $templateProcessor->setValue('lkhp_tanggapan', $toOpenXML->fromHTML($lkhp_tanggapan));
+        $templateProcessor->setValue('lkhp_komitmen', $toOpenXML->fromHTML($komitmen));
 
-            $templateProcessor->setValue('lkhp_jawab', htmlspecialchars($penanggung_jawab));
-            $templateProcessor->setValue('pemeriksa', htmlspecialchars($ttd_pemeriksa));
+        $templateProcessor->setValue('lkhp_tgl_kom', $lkhp_final->komitmen_tgl ? $lkhp_final->komitmen_tgl->translatedFormat('d F Y') : 'belum ada data');
+        $templateProcessor->setValue('lkhp_jawab', htmlspecialchars($penanggung_jawab));
+        $templateProcessor->setValue('pemeriksa', htmlspecialchars($ttd_pemeriksa));
 
-            $templateProcessor->setValue('lkhp_ttd_kaops', $lkhp_final->ttd_kaops);
-            $templateProcessor->setValue('lkhp_ttd_kakom', $lkhp_final->ttd_kakom);
-            $templateProcessor->setValue('lkhp_ttd_pincab', $lkhp_final->ttd_pincab);
-            $templateProcessor->setValue('lkhp_tgl_pengembalian', $tgl_pengembalian);
+        $templateProcessor->setValue('lkhp_ttd_kaops', $lkhp_final->ttd_kaops);
+        $templateProcessor->setValue('lkhp_ttd_kakom', $lkhp_final->ttd_kakom);
+        $templateProcessor->setValue('lkhp_ttd_pincab', $lkhp_final->ttd_pincab);
+        $templateProcessor->setValue('lkhp_tgl_pengembalian', $tgl_pengembalian);
 
-            // Debitur
-            // Ambil data dari Pivot
-            $pivotData = Pivot::with('kkpk.debitur')->where('id_lkhp_final', $ids)->get();
+        // Pivot & Debitur / Risk Event
+        $pivotData = Pivot::with('kkpk.debitur')->where('id_lkhp_final', $ids)->get();
 
-            // Risk Event
+        if ($pivotData->isNotEmpty()) {
             $risk_event = $pivotData->first()->riskEvent->kode_finding . ' - ' . $pivotData->first()->riskEvent->list_finding;
             $indikasi_resiko = $pivotData->first()->riskEvent->indikasi_resiko;
             $templateProcessor->setValue('risk_event', $risk_event);
             $templateProcessor->setValue('indikasi_resiko', $indikasi_resiko);
 
-            // Gandakan baris tabel sesuai dengan jumlah data
             $templateProcessor->cloneBlock('debitur_blok', $pivotData->count(), true, true);
 
-            // Isi placeholder di tabel dengan data
             foreach ($pivotData as $index => $pivot) {
-                $debitur = $pivot->kkpk->debitur;
+                $idx = $index + 1;
+                if ($lkhp_final->objek_pemeriksaan == 'Kredit' && $pivot->kkpk->debitur) {
+                    $debitur = $pivot->kkpk->debitur;
+                    $plafon = $debitur->plafon ? 'Rp ' . number_format($debitur->plafon, 0, ',', '.') : 'Belum ada data';
+                    $bd     = $debitur->baki_debet ? 'Rp ' . number_format($debitur->baki_debet, 0, ',', '.') : 'Belum ada data';
+                    $tgl_realisasi = $debitur->tgl_realisasi ? $debitur->tgl_realisasi->translatedFormat('d F Y') : 'Belum ada data';
 
-                // Format data
-                $plafon = $debitur->plafon ? 'Rp ' . number_format($debitur->plafon, 0, ',', '.') : 'Belum ada data';
-                $bd = $debitur->baki_debet ? 'Rp ' . number_format($debitur->baki_debet, 0, ',', '.') : 'Belum ada data';
-                $kol = $debitur->kol;
-                $dpd = $debitur->dpd;
-                $tgl_realisasi = $debitur->tgl_realisasi ? $debitur->tgl_realisasi->translatedFormat('d F Y') : 'Belum ada data';
-
-                // Set value untuk placeholder
-                $templateProcessor->setValue('deb_no#' . ($index + 1), $index + 1);
-                $templateProcessor->setValue('deb_norek#' . ($index + 1), $debitur->no_rekening);
-                $templateProcessor->setValue('deb_nama#' . ($index + 1), $debitur->nama_nasabah);
-                $templateProcessor->setValue('deb_plafon#' . ($index + 1), $plafon . '/' . $bd);
-                $templateProcessor->setValue('deb_kol#' . ($index + 1), $kol . '/' . $dpd);
-                $templateProcessor->setValue('deb_tgl_realisasi#' . ($index + 1), $tgl_realisasi);
-                $templateProcessor->setValue('deb_nama_ao#' . ($index + 1), $pivot->kkpk->nama_ao);
-                $templateProcessor->setValue('deb_nama_analis#' . ($index + 1), $pivot->kkpk->nama_analis);
-                $templateProcessor->setValue('deb_nama_kakom#' . ($index + 1), $pivot->kkpk->nama_kakom);
-                $templateProcessor->setValue('deb_nama_pincab#' . ($index + 1), $pivot->kkpk->nama_pincab);
-                $templateProcessor->setValue('deb_area_analis#' . ($index + 1), $pivot->kkpk->nama_analis_area);
-                $templateProcessor->setValue('deb_area_man#' . ($index + 1), $pivot->kkpk->nama_area_manager);
-                $templateProcessor->setValue('deb_man_bisnis#' . ($index + 1), $pivot->kkpk->nama_manager_bisnis);
-                $templateProcessor->setValue('deb_nama_dir#' . ($index + 1), $pivot->kkpk->nama_direksi);
-                $templateProcessor->setValue('pivot_keterangan_re#' . ($index + 1), $toOpenXML->fromHTML($pivot->keterangan_re));
-
-                // IMG
-                if ($pivot->pivotImg->isNotEmpty()) {
-                    foreach ($pivot->pivotImg as $num => $image) {
-                        // Mengganti '/' dengan '_' untuk nama folder
-                        $replace = str_replace('/', '_', $pivot->lkhp->no_lkhp_bayangan);
-                        $folderName = 'gambar/Gambar Pendukung LK - ' . $replace;
-
-                        // Gandakan baris tabel sesuai dengan jumlah gambar
-                        $templateProcessor->cloneBlock('piv_img_blok#' . ($index + 1), $pivot->pivotImg->count(), true, true);
-
-                        // Menambahkan gambar ke template
-                        $templateProcessor->setImageValue(
-                            'piv_img#' . ($index + 1) . '#' . ($num + 1),
-                            array(
-                                'path' => $folderName . '/' . $image->img, // Path gambar
-                                'width' => 150, // Lebar gambar
-                                'height' => 150, // Tinggi gambar
-                                'ratio' => true // Menjaga rasio gambar
-                            )
-                        );
-                        // Menambahkan caption gambar
-                        $templateProcessor->setValue('piv_caption#' . ($index + 1) . '#' . ($num + 1), $image->caption);
-                    }
-                } else {
-                    // Menghapus blok jika tidak ada gambar
-                    $templateProcessor->setValue('piv_img_blok#' . ($index + 1), '');
-                    $templateProcessor->setValue('/piv_img_blok#' . ($index + 1), '');
-                    $templateProcessor->setValue('piv_img#' . ($index + 1), '');
-                    $templateProcessor->setValue('piv_caption#' . ($index + 1), '');
+                    $templateProcessor->setValue('deb_no#' . $idx, $idx);
+                    $templateProcessor->setValue('deb_norek#' . $idx, $debitur->no_rekening);
+                    $templateProcessor->setValue('deb_nama#' . $idx, $debitur->nama_nasabah);
+                    $templateProcessor->setValue('deb_plafon#' . $idx, $plafon);
+                    $templateProcessor->setValue('deb_bd#' . $idx, $bd);
+                    $templateProcessor->setValue('deb_kol#' . $idx, $debitur->kol . ' / ' . $debitur->dpd);
+                    $templateProcessor->setValue('deb_tgl_realisasi#' . $idx, $tgl_realisasi);
+                    $templateProcessor->setValue('deb_nama_ao#' . $idx, $pivot->kkpk->nama_ao);
+                    $templateProcessor->setValue('deb_nama_analis#' . $idx, $pivot->kkpk->nama_analis);
+                    $templateProcessor->setValue('deb_nama_kakom#' . $idx, $pivot->kkpk->nama_kakom);
+                    $templateProcessor->setValue('deb_nama_pincab#' . $idx, $pivot->kkpk->nama_pincab);
+                    $templateProcessor->setValue('deb_area_analis#' . $idx, $pivot->kkpk->nama_analis_area);
+                    $templateProcessor->setValue('deb_area_man#' . $idx, $pivot->kkpk->nama_area_manager);
+                    $templateProcessor->setValue('deb_man_bisnis#' . $idx, $pivot->kkpk->nama_manager_bisnis);
+                    $templateProcessor->setValue('deb_nama_dir#' . $idx, $pivot->kkpk->nama_direksi);
                 }
-            }
-        }
-        // Operasional
-        else {
-            # code...
-            $templatePath = 'phpWord/template operasional.docx';
-            // Create an instance of TemplateProcessor
-            $templateProcessor = new TemplateProcessor($templatePath);
 
-            // value untuk mengisi template
-            // parse HTML to xml
-            $toOpenXML  = new Parser();
-            // $lkhp_uraian = strip_tags($lkhp_final->desc_uraian_permasalahan_fakta); // menghapus semua tag html
-            $lkhp_uraian_cek = $lkhp_final->desc_uraian_permasalahan_fakta;
-            $lkhp_keadaan = $lkhp_final->desc_keadaan_seharusnya;
-            $lkhp_penyebab = $lkhp_final->penyebab_terjadi_penyimpangan;
-            $lkhp_dampak = $lkhp_final->dampak_resiko;
-            $lkhp_rekomendasi = $lkhp_final->tindak_lanjut;
-            $lkhp_tanggapan_cek = $lkhp_final->tanggapan_auditee;
-            $komitmen = $lkhp_final->komitmen_tindakan;
-            $penanggung_jawab = $lkhp_final->penanggung_jawab;
-            $ttd_pemeriksa = $lkhp_final->ttd_pemeriksa;
+                // Proses replace <img> di HTML menjadi placeholder ${img_N}
+                $imagesIndex = count($images) + 1;
+                $keterangan_cek    = $pivot->keterangan_re;
+                $keterangan    = $this->replaceImagesWithPlaceholders($keterangan_cek, $images, $imagesIndex);
+                $templateProcessor->setValue('pivot_keterangan_re#' . $idx, $toOpenXML->fromHTML($keterangan));
 
-            $images = [];
-            $imageIndex = 1; // Untuk placeholder gambar
-            $lkhp_uraian = $this->replaceImagesWithPlaceholders($lkhp_uraian_cek, $images, $imageIndex);
-            $lkhp_tanggapan = $this->replaceImagesWithPlaceholders($lkhp_tanggapan_cek, $images, $imageIndex);
+                foreach ($images as $placeholder => $imageData) {
+                    $templateProcessor->setImageValue(
+                        $placeholder,
+                        [
+                            'path'   => $imageData['path'],
+                            'width'  => $imageData['width'],
+                            'height' => $imageData['height'],
+                            'ratio'  => true,
+                        ]
+                    );
+                }
 
-
-            // LKHP
-            $tgl_pengembalian = $lkhp_final->tgl_pengembalian ? $lkhp_final->tgl_pengembalian->translatedFormat('d F Y') : 'Data kosong';
-            $templateProcessor->setValue('kc', $lkhp_final->cabang->cabang);
-            $templateProcessor->setValue('tgl_pemeriksaan', $lkhp_final->tgl_awal->translatedFormat('d') . ' s/d ' . $lkhp_final->tgl_akhir->translatedFormat('d F Y'));
-            $templateProcessor->setValue('no_lkhp', $lkhp_final->no_lkhp);
-            $templateProcessor->setValue('lkhp_uraian', $toOpenXML->fromHTML($lkhp_uraian));
-            $templateProcessor->setValue('lkhp_keadaan', $toOpenXML->fromHTML($lkhp_keadaan));
-            $templateProcessor->setValue('lkhp_penyebab', $toOpenXML->fromHTML($lkhp_penyebab));
-            $templateProcessor->setValue('lkhp_dampak', $toOpenXML->fromHTML($lkhp_dampak));
-            $templateProcessor->setValue('lkhp_rekomendasi', $toOpenXML->fromHTML($lkhp_rekomendasi));
-            $templateProcessor->setValue('lkhp_tanggapan', $toOpenXML->fromHTML($lkhp_tanggapan));
-            $templateProcessor->setValue('lkhp_komitmen', $toOpenXML->fromHTML($komitmen));
-            $templateProcessor->setValue('lkhp_komitmen', $toOpenXML->fromHTML($komitmen));
-
-            $templateProcessor->setValue('lkhp_tgl_kom', $lkhp_final->komitmen_tgl ? $lkhp_final->komitmen_tgl->translatedFormat('d F Y') : 'belum ada data');
-
-            $templateProcessor->setValue('lkhp_jawab', htmlspecialchars($penanggung_jawab));
-            $templateProcessor->setValue('pemeriksa', htmlspecialchars($ttd_pemeriksa));
-
-            $templateProcessor->setValue('lkhp_ttd_kaops', $lkhp_final->ttd_kaops);
-            $templateProcessor->setValue('lkhp_ttd_kakom', $lkhp_final->ttd_kakom);
-            $templateProcessor->setValue('lkhp_ttd_pincab', $lkhp_final->ttd_pincab);
-            $templateProcessor->setValue('lkhp_tgl_pengembalian', $tgl_pengembalian);
-
-            // Debitur
-            // Ambil data dari Pivot
-            $pivotData = Pivot::with('kkpk.debitur')->where('id_lkhp_final', $ids)->get();
-
-            // Risk Event
-            $risk_event = $pivotData->first()->riskEvent->kode_finding . ' - ' . $pivotData->first()->riskEvent->list_finding;
-            $indikasi_resiko = $pivotData->first()->riskEvent->indikasi_resiko;
-            $templateProcessor->setValue('risk_event', $risk_event);
-            $templateProcessor->setValue('indikasi_resiko', $indikasi_resiko);
-
-            // Gandakan baris tabel sesuai dengan jumlah data
-            $templateProcessor->cloneBlock('debitur_blok', $pivotData->count(), true, true);
-
-            // Isi placeholder di tabel dengan data
-            foreach ($pivotData as $index => $pivot) {
-                // Set value untuk placeholder
-                $templateProcessor->setValue('pivot_keterangan_re#' . ($index + 1), $toOpenXML->fromHTML($pivot->keterangan_re));
-
-                // IMG
+                // Gambar Pendukung Pivot
                 if ($pivot->pivotImg->isNotEmpty()) {
+                    $replace = str_replace('/', '_', $pivot->lkhp->no_lkhp_bayangan);
+                    $folderName = 'gambar/Gambar Pendukung LK - ' . $replace;
+
+                    $templateProcessor->cloneBlock('piv_img_blok#' . $idx, $pivot->pivotImg->count(), true, true);
+
                     foreach ($pivot->pivotImg as $num => $image) {
-                        // Mengganti '/' dengan '_' untuk nama folder
-                        $replace = str_replace('/', '_', $pivot->lkhp->no_lkhp_bayangan);
-                        $folderName = 'gambar/Gambar Pendukung LK - ' . $replace;
-
-                        // Gandakan baris tabel sesuai dengan jumlah gambar
-                        $templateProcessor->cloneBlock('piv_img_blok#' . ($index + 1), $pivot->pivotImg->count(), true, true);
-
-                        // Menambahkan gambar ke template
+                        $imgNum = $num + 1;
                         $templateProcessor->setImageValue(
-                            'piv_img#' . ($index + 1) . '#' . ($num + 1),
-                            array(
-                                'path' => $folderName . '/' . $image->img, // Path gambar
-                                'width' => 150, // Lebar gambar
-                                'height' => 150, // Tinggi gambar
-                                'ratio' => true // Menjaga rasio gambar
-                            )
+                            'piv_img#' . $idx . '#' . $imgNum,
+                            [
+                                'path'   => $folderName . '/' . $image->img,
+                                'width'  => 150,
+                                'height' => 150,
+                                'ratio'  => true
+                            ]
                         );
-                        // Menambahkan caption gambar
-                        $templateProcessor->setValue('piv_caption#' . ($index + 1) . '#' . ($num + 1), $image->caption);
+                        $templateProcessor->setValue('piv_caption#' . $idx . '#' . $imgNum, $image->caption);
                     }
                 } else {
-                    // Menghapus blok jika tidak ada gambar
-                    $templateProcessor->setValue('piv_img_blok#' . ($index + 1), '');
-                    $templateProcessor->setValue('/piv_img_blok#' . ($index + 1), '');
-                    $templateProcessor->setValue('piv_img#' . ($index + 1), '');
-                    $templateProcessor->setValue('piv_caption#' . ($index + 1), '');
+                    $templateProcessor->setValue('piv_img_blok#' . $idx, '');
+                    $templateProcessor->setValue('/piv_img_blok#' . $idx, '');
+                    $templateProcessor->setValue('piv_img#' . $idx, '');
+                    $templateProcessor->setValue('piv_caption#' . $idx, '');
                 }
             }
         }
 
-        // Simpan atau unduh dokumen yang telah diproses
-        $fileExam = 'LKHP_' . now()->format('YmdHi') . '.docx';
-        $filePathExam = ('phpWord/' . $fileExam);
+        // Tahap 1: Simpan dokumen sementara
+        $fileExam = 'LKHP_TEMP_' . now()->format('YmdHis') . '_' . uniqid() . '.docx';
+        $filePathExam = public_path('phpWord/' . $fileExam);
         $templateProcessor->saveAs($filePathExam);
 
-        // disini harus ada pengecekan jika ada tag img jalankan dibawah ini
-
-        // setelah koreksi jika ada tag img maka lakukan proses kedua ini
+        // Tahap 2: Sisipkan Gambar Inline dari HTML (jika ada)
         if (!empty($images)) {
+
             $secondTemplates = new TemplateProcessor($filePathExam);
 
-            // tanpa import style image
-            // foreach ($images as $placeholder => $imagePath) {
-            //     $secondTemplates->setImageValue($placeholder, [
-            //         'path' => $imagePath, // image name sesuai dengan isi dari database
-            //         'width' => 650,
-            //         'height' => 650,
-            //         'ratio' => true,
-            //     ]);
-            // }
-
-            // dengan style image
             foreach ($images as $placeholder => $imageData) {
+
                 $secondTemplates->setImageValue($placeholder, [
-                    'path' => $imageData['path'], // Path lokal gambar
-                    'width' => $imageData['width'], // Gunakan width dari style
-                    'height' => $imageData['width'], // Tetapkan height sama dengan width agar square
-                    'ratio' => true,
+                    'path'   => $imageData['path'],
+                    'width'  => $imageData['width'],
+                    'height' => $imageData['height'],
+                    'ratio'  => true,
                 ]);
             }
 
             $fileName = 'LKHP_' . now()->format('YmdHi') . '.docx';
-            $filePath = 'phpWord/' . $fileName;
-
+            $filePath = public_path('phpWord/' . $fileName);
             $secondTemplates->saveAs($filePath);
         } else {
-            // Jika tidak ada gambar, fileExam langsung dijadikan file utama
             $filePath = $filePathExam;
         }
 
-        // jika tidak ada tag img maka jalankan ini
-        // hapus file $fileExam yang tersimpan
-        // Kemudian Kembalikan response (misalnya, untuk mendownload file)
+        // Download dan hapus file setelah selesai terkirim
+        unlink($filePathExam); // Hapus file sementara
         return response()->download($filePath)->deleteFileAfterSend(true);
     }
 
@@ -906,7 +800,7 @@ class LkhpFinalController extends Controller
                 $image_name = url('/resource-gambar/' . time() . $key . '.png');
                 // file_put_contents(public_path() . $image_name, $data);
                 file_put_contents(public_path('upload/img/' . time() . $key . '.png'), $data);
-                $src = url('/upload/img/' . time() . $key . '.png');
+                $src = url($image_name);
 
                 $img->removeAttribute('src');
                 $img->setAttribute('src', $src);
@@ -1002,45 +896,121 @@ class LkhpFinalController extends Controller
 
 
     // Fungsi untuk mengganti tag <img> dengan placeholder dengan stylenya
-    function replaceImagesWithPlaceholders($html, &$images, &$imageIndex)
+
+
+    private function replaceImagesWithPlaceholders($html, &$images, &$imageIndex)
     {
-        return preg_replace_callback('/<img[^>]+src=["\']([^"\']+)["\'][^>]*style=["\']([^"\']*)["\'][^>]*>/', function ($matches) use (&$images, &$imageIndex) {
-            $src = $matches[1];
-            $style = $matches[2]; // Style inline dari tag <img>
+        if (empty($html)) {
+            return $html;
+        }
 
-            // Ambil nilai width dari style="width: xxxpx;"
-            // Ambil nilai width dari style="width: xxxpx;"
-            $width = 650; // Default width jika tidak ditemukan
-            if (preg_match('/width:\s*(\d+)px;?/', $style, $widthMatch)) {
-                $width = (int) $widthMatch[1]; // Ambil nilai width jika ditemukan
+        libxml_use_internal_errors(true);
+
+        $dom = new \DOMDocument('1.0', 'UTF-8');
+
+        $dom->loadHTML(
+            '<?xml encoding="UTF-8"><div id="wrapper">' . $html . '</div>',
+            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+        );
+
+        $xpath = new \DOMXPath($dom);
+
+        $imgElements = $xpath->query('//img');
+
+        // Simpan dahulu daftar gambar agar aman saat DOM dimodifikasi
+        $imgElements = iterator_to_array($imgElements);
+
+        foreach ($imgElements as $img) {
+
+            $src = $img->getAttribute('src');
+
+            if (empty($src)) {
+                $img->parentNode->removeChild($img);
+                continue;
             }
 
-            if (app()->environment('local')) {
-                $imagePath = public_path(str_replace(url('/'), '', $src));
+            // Ambil lokasi file gambar dari URL
+            $imageUrlPath = parse_url($src, PHP_URL_PATH);
+
+            $imageUrlPath = rawurldecode($imageUrlPath);
+
+            // jika URL menggunakan route /resource-gambar/
+            // arahkan ke lokasi file fisik yang sebenarnya
+            if (strpos($imageUrlPath, '/resource-gambar/') === 0) {
+                $imagePath = public_path(
+                    'upload/img/' . basename($imageUrlPath)
+                );
             } else {
-                // Sesuaikan dengan jalur folder Anda untuk production, karena phpword tidak bisa membaca gambar dari URL
-                $imagePath = base_path(str_replace(url('/resource-gambar'), '', 'public/upload/img' . $src));
+                $imagePath = public_path(
+                    ltrim($imageUrlPath, '/')
+                );
             }
 
-
-            if (file_exists($imagePath)) {
-                $placeholder = "img_{$imageIndex}";
-                $changePlaceholder = "{" . $placeholder . "}";
-                // $images[$placeholder] = $imagePath;
-                // Simpan path gambar & width ke dalam array
-                $images[$placeholder] = [
-                    'path' => $imagePath,
-                    'width' => $width
-                ];
-                $imageIndex++;
-
-                // Ganti tag <img> dengan placeholder tanpa mengubah format lain
-                return "<br>\${$changePlaceholder}<br>";
+            // Periksa file
+            if (!is_file($imagePath)) {
+                $img->parentNode->removeChild($img);
+                continue;
             }
 
-            return $matches[0]; // Jika gambar tidak ditemukan, tetap gunakan tag asli
-        }, $html);
+            // Ambil ukuran gambar
+            $size = @getimagesize($imagePath);
+
+            if (!$size) {
+                $img->parentNode->removeChild($img);
+                continue;
+            }
+
+            // Ambil width dari inline style
+            $style = $img->getAttribute('style');
+
+            $width = 650;
+
+            if (preg_match('/width\s*:\s*(\d+(?:\.\d+)?)px/i', $style, $match)) {
+                $width = (int) round((float) $match[1]);
+            } elseif ($img->hasAttribute('width')) {
+                $width = (int) $img->getAttribute('width');
+            }
+
+            // Hitung tinggi berdasarkan rasio asli
+            $height = (int) round(
+                ($width / $size[0]) * $size[1]
+            );
+
+            $placeholder = 'img_' . $imageIndex;
+
+            $images[$placeholder] = [
+                'path'   => $imagePath,
+                'width'  => $width,
+                'height' => $height,
+            ];
+
+            $imageIndex++;
+
+            // Buat placeholder pada posisi gambar semula
+            $placeholderNode = $dom->createTextNode(
+                '${' . $placeholder . '}'
+            );
+
+            $img->parentNode->replaceChild(
+                $placeholderNode,
+                $img
+            );
+        }
+
+        $wrapper = $dom->getElementById('wrapper');
+
+        $result = '';
+
+        foreach ($wrapper->childNodes as $child) {
+            $result .= $dom->saveHTML($child);
+        }
+
+        libxml_clear_errors();
+
+        return $result;
     }
+
+
 
 
 

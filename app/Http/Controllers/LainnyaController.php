@@ -14,19 +14,13 @@ class LainnyaController extends Controller
             $data = Lainnya::orderBy('nama', 'ASC')->get();
             return DataTables()->of($data)
                 ->addColumn('action', function ($data) {
-                    if (auth()->user()->sub_jabatan == 'Kabid Internal Audit') {
-                        $button = '<a data-toggle="modal" data-target="#modalEdit' . $data->id  . '" id="' . $data->id  . '"
+                    $button = '<a data-toggle="modal" data-target="#modalEdit' . $data->id  . '" id="' . $data->id  . '"
                                             class="btn btn-warning btn-sm edit" data-kode_form="' . $data->nama . '">
                                             <i class="fa fa-edit"></i></a>';
-                        $button .= '&nbsp;';
-                        $button .= '<a data-toggle="modal" id="' . $data->id  . '"
+                    $button .= '&nbsp;';
+                    $button .= '<a data-toggle="modal" id="' . $data->id  . '"
                                             class="hapus btn btn-danger btn-sm delete-post ">
                                             <i class="fa fa-trash"></i></a>';
-                    } else {
-                        $button = '<a class="btn btn-warning btn-sm edit disabled"><i class="fa fa-edit"></i></a>';
-                        $button .= '&nbsp;';
-                        $button .= '<a class="delete btn btn-danger btn-sm delete-post disabled"><i class="fa fa-trash"></i></a>';
-                    }
                     return $button;
                 })
                 ->rawColumns(['action'])

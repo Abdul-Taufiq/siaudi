@@ -267,7 +267,10 @@
                                     <div class="row ml-2">
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label for="">Upload Gambar Pendukung :</label>
+                                                <label for="img_re_old_{{ $count }}_{{ $loop->iteration }}">
+                                                    Upload Image Pendukung :
+                                                    <small>(kosongkan jika image sama)</small>
+                                                </label>
                                                 <input class="form-control form-control-sm" type="file"
                                                     name="img_re_old_{{ $count }}_{{ $loop->iteration }}"
                                                     id="img_re_old_{{ $count }}_{{ $loop->iteration }}"

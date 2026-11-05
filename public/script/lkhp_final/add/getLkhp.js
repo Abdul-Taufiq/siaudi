@@ -35,10 +35,14 @@ function getLkhp() {
                             <input type="checkbox" id="id_lkhp_${
                                 index + 1
                             }" name="id_lkhp_${index + 1}" value="${
-                            item.id_lkhp
-                        }">
+                                item.id_lkhp
+                            }">
                         </td>
-                        <td>${item.no_lkhp_bayangan}</td>
+                        <td>
+                            ${item.no_lkhp_bayangan} <br><br>
+                            <b>${data.kkpk.debitur.nama_nasabah}</b> <br>
+                            <b>${data.kkpk.debitur.no_rekening}</b> 
+                        </td>
                         <td>
                             <table class="table-sm" style="width: 100%">
                                 <tr>
@@ -46,14 +50,14 @@ function getLkhp() {
                                     <td style="width: 2%">:</td>
                                     <td>
                                         ${new Date(
-                                            item.tgl_awal
+                                            item.tgl_awal,
                                         ).toLocaleDateString("id-ID", {
                                             day: "2-digit",
                                             month: "long",
                                             year: "numeric",
                                         })} s/d
                                         ${new Date(
-                                            item.tgl_akhir
+                                            item.tgl_akhir,
                                         ).toLocaleDateString("id-ID", {
                                             day: "2-digit",
                                             month: "long",
@@ -91,11 +95,6 @@ function getLkhp() {
                                     <td>${
                                         item.desc_uraian_permasalahan_fakta
                                     }</td>
-                                </tr>
-                                <tr>
-                                    <th style="width: 35%; color: rgb(20, 145, 145)">Desc Keadaan Seharusnya</th>
-                                    <td style="width: 2%">:</td>
-                                    <td>${item.desc_keadaan_seharusnya}</td>
                                 </tr>
                                 <tr>
                                     <th style="width: 35%; color: rgb(20, 145, 145)">Penyebab Terjadi Penyimpangan</th>

@@ -221,10 +221,14 @@
                                                 <td style="width: 49%">
                                                     <table style="width: 100%" class="table table-sm">
                                                         <tr>
-                                                            <td style="width: 40%;">Plafond/Baki Debet</td>
+                                                            <td style="width: 40%;">Plafond</td>
                                                             <td>:
                                                                 {{ $pivot->kkpk->debitur->plafon ? 'Rp ' . number_format($pivot->kkpk->debitur->plafon, 0, ',', '.') : 'Belum ada data' }}
-                                                                /
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="width: 40%;">Baki Debet</td>
+                                                            <td>:
                                                                 {{ $pivot->kkpk->debitur->baki_debet ? 'Rp ' . number_format($pivot->kkpk->debitur->baki_debet, 0, ',', '.') : 'Belum ada data' }}
                                                             </td>
                                                         </tr>

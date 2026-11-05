@@ -2,6 +2,10 @@
 /public/build
 /public/hot
 /public/storage
+/public/gambar
+/public/upload/img/*.png
+/public/file_upload/Debitur
+/public/file_upload/RiskEvent
 /storage/*.key
 /vendor
 .env

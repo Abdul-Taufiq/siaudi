@@ -133,7 +133,7 @@
                                     </tr>
                                     <tr>
                                         <th>Tujuan Pinjaman</th>
-                                        <td>{!! $kkpk->debitur->alamat_kredit !!}</td>
+                                        <td>{!! $kkpk->debitur->tujuan_kredit !!}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -187,26 +187,6 @@
         <div class="card card-outline card-success mb-0"></div>
     </div>
 
-    {{-- ttd --}}
-    <div style="page-break-inside: avoid">
-        <table class="table table-borderless" style="text-align: center">
-            <tr>
-                <td style="width: 33%; padding-bottom: 70px; font-weight: bold">Pendamping/Kantor Cabang,</td>
-                <td style="width: 34%;  padding-bottom: 70px; font-weight: bold">Pemeriksa,</td>
-                <td style="width: 33%;  padding-bottom: 70px; font-weight: bold">Yang ditemui,</td>
-            </tr>
-            <tr>
-                <td>(.................................................)</td>
-                <td>(.................................................)</td>
-                <td>(.................................................)</td>
-            </tr>
-            <tr>
-                <td style="text-align: left; padding-top: 0px;"><b>Bagian:</b></td>
-                <td style="padding-top: 0px;"><b>Audit Internal</b></td>
-                <td style="padding-top: 0px;"><b>Debitur/Pasangan/Lainnya</b></td>
-            </tr>
-        </table>
-    </div>
 
     {{-- footer --}}
     <script type="text/php">

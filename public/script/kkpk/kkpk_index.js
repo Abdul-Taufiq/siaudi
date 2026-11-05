@@ -439,10 +439,10 @@ $("#id_debitur").on("change", function () {
             $("#jkw").text(nasabahData.jkw);
             $("#status").text(nasabahData.kol + "/" + nasabahData.dpd);
             $("#tgl_realisasi").text(
-                moment(nasabahData.tgl_realisasi).locale("id").format("LL")
+                moment(nasabahData.tgl_realisasi).locale("id").format("LL"),
             );
             $("#tgl_jth_tempo").text(
-                moment(nasabahData.tgl_jth_tempo).locale("id").format("LL")
+                moment(nasabahData.tgl_jth_tempo).locale("id").format("LL"),
             );
             var formattedPlafon = formatRupiah(nasabahData.plafon, "Rp. ");
             $("#plafon").text(formattedPlafon);
@@ -633,16 +633,16 @@ $(document).ready(function () {
         // var modalId = "myModal" + Id;
         // $("#myModal").attr("id", modalId); //merubah id dari modal
         $("#modalHeader").text("DETAIL DATA - Kode KKPK = " + kode_form);
-        $("#frameDetail").attr("src", "/data-kkpk/" + Id); //merubah link frame
+        $("#frameDetail").attr("src", "/data-kkpk/" + data_ID); //merubah link frame
         $("#kkpk_print").attr("href", "/print-kkpk/" + data_ID);
 
         // modal ots / second modal
         document.getElementById("detail_data_kko").onclick = function () {
             $("#ModalKKO").modal("show"); // Tampilkan modal kedua
             $("#titleModalKKO").text(
-                "DETAIL DATA OTS - Kode KKPK = " + kode_form
+                "DETAIL DATA OTS - Kode KKPK = " + kode_form,
             );
-            $("#frameDetailKKO").attr("src", "/show-kko/" + Id); //merubah link frame
+            $("#frameDetailKKO").attr("src", "/show-kko/" + data_ID); //merubah link frame
             $("#ots_print").attr("href", "/print-kko/" + data_ID);
             $("#myModal").modal("hide"); // Tampilkan modal pertama
         };
@@ -764,21 +764,21 @@ $(document).ready(function () {
 
                 $("#status_kko").text(nasabahData.kol + "/" + nasabahData.dpd);
                 $("#tgl_realisasi_kko").text(
-                    moment(nasabahData.tgl_realisasi).locale("id").format("LL")
+                    moment(nasabahData.tgl_realisasi).locale("id").format("LL"),
                 );
                 $("#tgl_jth_tempo_kko").text(
-                    moment(nasabahData.tgl_jth_tempo).locale("id").format("LL")
+                    moment(nasabahData.tgl_jth_tempo).locale("id").format("LL"),
                 );
 
                 var formattedPlafonKKO = formatRupiah(
                     nasabahData.plafon,
-                    "Rp. "
+                    "Rp. ",
                 );
                 $("#plafon_kko").text(formattedPlafonKKO);
 
                 var formattedBDKKO = formatRupiah(
                     nasabahData.baki_debet,
-                    "Rp. "
+                    "Rp. ",
                 );
                 $("#baki_debet_kko").text(formattedBDKKO);
             },

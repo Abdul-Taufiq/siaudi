@@ -240,7 +240,7 @@ class LkhpOpsController extends Controller
                         // Update Pivot untuk Keterangan dan RE
                         $item->update([
                             'id_event_risk' => $id_event_risk,
-                            'keterangan_re' => $keterangan_re
+                            'keterangan_re' => $this->SummernoteImg($keterangan_re)
                         ]);
                     }
                 } else {
@@ -283,7 +283,7 @@ class LkhpOpsController extends Controller
                 $re->id_lkhp = $pivot_tunggal->id_lkhp;
                 $re->id_kkpk = $pivot_tunggal->id_kkpk;
                 $re->id_event_risk = $request->input('id_event_risk_' . $counter_re);
-                $re->keterangan_re = $request->input('keterangan_re_' . $counter_re);
+                $re->keterangan_re = $this->SummernoteImg($request->input('keterangan_re_' . $counter_re));
                 $re->save();
             }
 
@@ -320,50 +320,37 @@ class LkhpOpsController extends Controller
 
 
     // fungsi handle summernote img
+    // fungsi handle summernote img
     private function SummernoteImg($html)
     {
-        // Jika HTML kosong, kembalikan HTML seperti awal
         if (empty($html)) {
             return $html;
         }
-
-        // Buat objek DOMDocument
         $dom = new DOMDocument();
-        // Muat HTML ke dalam objek DOMDocument
         @$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
-        // Ambil semua elemen gambar dalam HTML
         $images = $dom->getElementsByTagName('img');
         foreach ($images as $key => $img) {
-            // Ambil nilai atribut 'rc'
             $src = $img->getAttribute('src');
-            // Jika 'rc' berisi URL gambar dalam format base64
             if (strpos($src, 'base64,') !== false) {
-                // Pisahkan tipe data dan data gambar
                 list($type, $data) = explode(';', $src);
                 list(, $data) = explode(',', $data);
-                // Dekode data gambar dari format base64
                 $data = base64_decode($data);
 
-                // Buat nama file gambar baru
                 // $image_name = '/upload/img/' . time() . $key . '.png';
-                // // Simpan gambar ke dalam direktori yang ditentukan
-                // file_put_contents(public_path() . $image_name, $data);
-
                 $image_name = url('/resource-gambar/' . time() . $key . '.png');
+                // file_put_contents(public_path() . $image_name, $data);
                 file_put_contents(public_path('upload/img/' . time() . $key . '.png'), $data);
+                $src = url($image_name);
 
-
-                // Hapus atribut 'rc' yang lama
                 $img->removeAttribute('src');
-                // Tambahkan atribut 'rc' yang baru ke elemen gambar
-                $img->setAttribute('src', $image_name);
+                $img->setAttribute('src', $src);
             }
         }
 
-        // Kembalikan HTML yang diperbarui
         return $dom->saveHTML();
     }
+
 
     // ============
     // Log Activity

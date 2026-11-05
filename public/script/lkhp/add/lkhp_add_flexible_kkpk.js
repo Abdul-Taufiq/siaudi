@@ -6,11 +6,11 @@ $(document).ready(function () {
 // flexibel tambah kkpk
 function FlexKkpk(count_one, count_two) {
     let container = document.getElementById(
-        `tambahan_debitur_${count_one}_${count_two}`
+        `tambahan_debitur_${count_one}_${count_two}`,
     );
 
     var addButton = document.getElementById(
-        `tambah_kkpk_${count_one}_${count_two}`
+        `tambah_kkpk_${count_one}_${count_two}`,
     );
 
     addButton.addEventListener("click", function () {
@@ -146,7 +146,7 @@ function FlexKkpk(count_one, count_two) {
         // Fungsi Flexible RE
         // Saat cabang dipilih, kirim permintaan AJAX untuk mendapatkan data kkpk
         let kkpkSelect = document.getElementById(
-            `id_kkpk_${count_one}_${count_two}`
+            `id_kkpk_${count_one}_${count_two}`,
         );
         let ValCabang = document.getElementById("id_cabang").value;
         if (ValCabang > 0) {
@@ -170,7 +170,7 @@ function FlexKkpk(count_one, count_two) {
                         option.text =
                             kkpk.kode_kkpk +
                             " → (" +
-                            kkpk.nama_pemeriksa +
+                            kkpk.debitur.nama_nasabah +
                             ") → Tgl Pemeriksaan: " +
                             moment(kkpk.tgl_pemeriksaan)
                                 .locale("id")

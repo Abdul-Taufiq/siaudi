@@ -190,22 +190,30 @@ class TemuanBerulangController extends Controller
 
         foreach ($data as $key => $group) {
             $firstItem = $group->first();
-            $cabangList = $group->map(function ($item) {
+
+            // Pastikan hanya mengambil data yang memiliki lkhpFinal
+            $cabangList = $group->filter(function ($item) {
+                return isset($item->lkhpFinal->cabang);
+            })->map(function ($item) {
                 return '- ' . $item->lkhpFinal->cabang->cabang;
             })->unique()->implode('<br>');
 
-            $tahunTemuanList = $group->map(function ($item) {
+            $tahunTemuanList = $group->filter(function ($item) {
+                return isset($item->lkhpFinal);
+            })->map(function ($item) {
                 return '- ' . $item->lkhpFinal->created_at->translatedFormat('d F Y');
             })->unique()->implode('<br>');
 
             $formattedData[] = [
                 'kode_finding' => $firstItem->riskEvent->kode_finding . ' - ' . $firstItem->riskEvent->list_finding,
-                'objek_pemeriksaan' => $firstItem->lkhpFinal->objek_pemeriksaan,
+                'objek_pemeriksaan' => $firstItem->lkhpFinal->objek_pemeriksaan ?? 'Tidak Ada Data',
                 'cabang' => $cabangList,
                 'tahun_temuan' => $tahunTemuanList,
                 'action' => '<a href="' . route('temuan-berulang.show', encrypt($firstItem->id_event_risk)) . '" class="btn btn-sm btn-info"><span class="icon text-white-50"><i class="fa fa-eye"></i></span></a>',
             ];
         }
+
+
 
         if (request()->ajax()) {
             return datatables()->of($formattedData)

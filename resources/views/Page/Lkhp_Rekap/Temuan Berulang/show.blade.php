@@ -63,18 +63,18 @@
                                         @foreach ($data as $items)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $items->lkhpFinal->cabang->cabang }}</td>
-                                                <td>{{ $items->lkhpFinal->no_lkhp }}</td>
+                                                <td>{{ $items->lkhpFinal?->cabang->cabang ?? 'data hilang' }}</td>
+                                                <td>{{ $items->lkhpFinal?->no_lkhp ?? 'data hilang' }}</td>
                                                 <td>
-                                                    {{ $items->lkhpFinal->tgl_awal->translatedFormat('d') }} s/d
-                                                    {{ $items->lkhpFinal->tgl_akhir->translatedFormat('d F Y') }}
+                                                    {{ $items->lkhpFinal?->tgl_awal->translatedFormat('d') }} s/d
+                                                    {{ $items->lkhpFinal?->tgl_akhir->translatedFormat('d F Y') }}
                                                 </td>
-                                                <td>{{ $items->lkhpFinal->objek_pemeriksaan }}</td>
-                                                <td>{{ $items->lkhpFinal->nama_creator }}</td>
+                                                <td>{{ $items->lkhpFinal?->objek_pemeriksaan ?? 'data hilang' }}</td>
+                                                <td>{{ $items->lkhpFinal?->nama_creator ?? 'data hilang' }}</td>
                                                 <td>
-                                                    <a href="{{ route('lkhp-final.show', encrypt($items->lkhpFinal->id_lkhp_final)) }}"
-                                                        class="btn btn-sm btn-info"><span class="icon text-white-50"><i
-                                                                class="fa fa-eye"></i></span></a>
+                                                    <a href="{{ route('lkhp-final.show', encrypt($items->lkhpFinal?->id_lkhp_final)) }}"
+                                                        class="btn btn-sm btn-info {{ $items->lkhpFinal == null ? 'disabled' : '' }}"><span
+                                                            class="icon text-white-50"><i class="fa fa-eye"></i></span></a>
                                                 </td>
                                             </tr>
                                         @endforeach

@@ -86,27 +86,23 @@ class KkpkController extends Controller
                     // Cek apakah user memiliki hak akses untuk mengedit atau menghapus
                     if (auth()->user()->sub_jabatan == 'Kabid Audit Internal' || auth()->user()->nama == $data->nama_pemeriksa) {
                         // cek apakah kkpk udah ditambahkan ke LKHP atau belum if yes maka button off
-                        if ($data->status == null) {
-                            # code...
-                            // Tombol tambah KKO
-                            $button .= '<a data-toggle="modal" data-target="#modalTambahKKO' . $data->id_kkpk  . '" id="' . $data->debitur->id_debitur  . '"
+                        // Tombol tambah KKO
+                        $button .= '<a data-toggle="modal" data-target="#modalTambahKKO' . $data->id_kkpk  . '" id="' . $data->debitur->id_debitur  . '"
                                                 class="btn btn-success btn-sm tambah_kko" data-kode_form="' . $data->kode_kkpk . '">
                                                 <i class="fa fa-plus"></i></a>';
-                            $button .= '&nbsp;';
-                            // Tombol edit
-                            $button .= '<a data-toggle="modal" data-target="#modalEdit' . $data->id_kkpk  . '" id="' . $data->id_kkpk  . '"
+                        $button .= '&nbsp;';
+                        // Tombol edit
+                        $button .= '<a data-toggle="modal" data-target="#modalEdit' . $data->id_kkpk  . '" id="' . $data->id_kkpk  . '"
                                                 class="btn btn-warning btn-sm edit" data-kode_form="' . $data->kode_kkpk . '">
                                                 <i class="fa fa-edit"></i></a>';
-                            $button .= '&nbsp;';
-                            // Tombol hapus
+                        $button .= '&nbsp;';
+                        // Tombol hapus
+                        if ($data->status == null) {
                             $button .= '<a data-toggle="modal" id="' . $data->id_kkpk  . '"
-                                                class="hapus btn btn-danger btn-sm delete-post ">
-                                                <i class="fa fa-trash"></i></a>';
+                                            class="hapus btn btn-danger btn-sm delete-post ">
+                                            <i class="fa fa-trash"></i></a>';
                         } else {
                             // Jika tidak memenuhi kondisi, tambahkan kelas disabled pada tombol
-                            $button .= '<a class="btn btn-success btn-sm disabled"><i class="fa fa-plus"></i></a>';
-                            $button .= '&nbsp;';
-                            $button .= '<a class="btn btn-warning btn-sm edit disabled"><i class="fa fa-edit"></i></a>';
                             $button .= '&nbsp;';
                             $button .= '<a class="delete btn btn-danger btn-sm delete-post disabled"><i class="fa fa-trash"></i></a>';
                         }
@@ -170,7 +166,7 @@ class KkpkController extends Controller
     {
         $kkpk = Kkpk::where('id_debitur', $Id)->first();
         $kko = Kko::where('id_kkpk', $kkpk->id_kkpk)->first();
-        if ($kko > 0) {
+        if ($kko) {
             $kko->delete();
         };
         Debitur::where('id_debitur', $kkpk->id_debitur)->update([
@@ -205,11 +201,12 @@ class KkpkController extends Controller
         $deskripsi = $dom->saveHTML();
 
 
-        $data = Kko::create([
-            'id_kkpk' => $kkpk->id_kkpk,
-            'tgl_kunjungan' => Carbon::createFromFormat('d-m-Y', $request->tgl_kunjungan)->format('Y-m-d'),
-            'deskripsi' => $deskripsi
-        ]);
+        $kkoC = new Kko();
+        $kkoC->id_kkpk = $kkpk->id_kkpk;
+        $kkoC->tgl_kunjungan = Carbon::createFromFormat('d-m-Y', $request->tgl_kunjungan)->format('Y-m-d');
+        $kkoC->deskripsi = $deskripsi;
+        $kkoC->save();
+
 
         // log Act
         $aksi = "(+) Tambah Data KUNJUNGAN DEBITUR : " . $kkpk->debitur->nama_nasabah;
@@ -220,8 +217,10 @@ class KkpkController extends Controller
 
     public function ShowKKO($Id)
     {
-        $kkpk = Kkpk::where('id_kkpk', $Id)->first();
-        $data = Kko::where('id_kkpk', $Id)->first();
+        $ids = Crypt::decrypt($Id);
+        $kkpk = Kkpk::where('id_kkpk', $ids)->first();
+        $data = Kko::where('id_kkpk', $ids)->first();
+
         return view('Page.Kkpk.show-kko', compact('data', 'kkpk'));
     }
 
@@ -482,8 +481,10 @@ class KkpkController extends Controller
     }
 
 
-    public function show(Kkpk $kkpk)
+    public function show($Id)
     {
+        $ids = Crypt::decrypt($Id);
+        $kkpk = Kkpk::where('id_kkpk', $ids)->first();
         return view('Page.Kkpk.show', compact('kkpk'));
     }
 

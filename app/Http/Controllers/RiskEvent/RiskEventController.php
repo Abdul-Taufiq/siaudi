@@ -58,21 +58,24 @@ class RiskEventController extends Controller
     // Store Excel
     public function store(Request $request)
     {
-       // Simpan file ke server menggunakan Storage Laravel
+        // Simpan file ke server menggunakan Storage Laravel
         $data = $request->file('file_excel');
         $originalName = $data->getClientOriginalName();
         $extension = $data->getClientOriginalExtension();
-    
+
         // Buat nama file unik dengan menambahkan timestamp atau UUID
         $namaFile = pathinfo($originalName, PATHINFO_FILENAME) . ' - ' . date('dmY-His') . '.' . $extension;
         $filePath = 'file_upload/RiskEvent/' . $namaFile;
-    
+
         // Simpan file ke storage publik
         $data->move(public_path('file_upload/RiskEvent'), $namaFile);
-    
+
         // Lempar ke Fungsi Import
         $fullPath = public_path('file_upload/RiskEvent/' . $namaFile);
         Excel::import(new ImportRiskEvent, $fullPath);
+
+        // hapus file setelah di simpan
+        unlink($fullPath);
 
         // log Act
         $aksi = "(+) Tambah Data Event Risk (File Excel) dengan Nama File: " . $namaFile;

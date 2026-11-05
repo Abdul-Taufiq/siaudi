@@ -85,7 +85,6 @@ function initializeSummernote(selector, placeholder, height) {
 // Inisialisasi Summernote dengan selector, placeholder, dan tinggi yang berbeda
 initializeSummernote(`#keterangan_re_1_1`, "Keterangan...", 200);
 initializeSummernote("#desc_uraian_permasalahan_fakta", "Deskripsi...", 100);
-initializeSummernote("#desc_keadaan_seharusnya", "Text...", 100);
 initializeSummernote("#penyebab_terjadi_penyimpangan", "Text...", 100);
 initializeSummernote("#dampak_resiko", "Text...", 100);
 initializeSummernote("#tindak_lanjut", "Text...", 100);
@@ -143,6 +142,6 @@ function configSummernote(count_one, count_two) {
                     .addClass("border-success")
                     .removeClass("border-danger");
             }
-        }
+        },
     );
 }

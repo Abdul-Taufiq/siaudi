@@ -60,7 +60,6 @@ function showlkhp(counter) {
 function sanitizeAndDisplayHTML(data, counter) {
     // Membersihkan HTML menggunakan DOMPurify
     let uraian = DOMPurify.sanitize(data.desc_uraian_permasalahan_fakta);
-    let keadaan = DOMPurify.sanitize(data.desc_keadaan_seharusnya);
     let penyebab = DOMPurify.sanitize(data.penyebab_terjadi_penyimpangan);
     let dampak = DOMPurify.sanitize(data.dampak_resiko);
     let tindak = DOMPurify.sanitize(data.tindak_lanjut);
@@ -81,7 +80,7 @@ function flexlkhp() {
     addButton.addEventListener("click", function () {
         // Temukan semua elemen input dengan nama yang sesuai pola
         var inputElements = document.querySelectorAll(
-            'select[name^="id_lkhp_bayangan_"]'
+            'select[name^="id_lkhp_bayangan_"]',
         );
         // Mencari nomor terbesar dari nama input
         var angka_besar = 0;
@@ -123,10 +122,10 @@ function flexlkhp() {
                 innerHTML += `
                     <option value="${data.id_lkhp}">
                         ${data.cabang.cabang} - ${data.no_lkhp_bayangan} - ${
-                    data.objek_pemeriksaan
-                } - (
+                            data.objek_pemeriksaan
+                        } - (
                         ${new Date(data.tgl_awal).toLocaleDateString(
-                            "id-ID"
+                            "id-ID",
                         )} s/d
                         ${new Date(data.tgl_akhir).toLocaleDateString("id-ID", {
                             day: "2-digit",

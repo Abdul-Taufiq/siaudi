@@ -168,14 +168,14 @@
                                                 <b>PRINT LKHP As PDF</b>
                                             </button>
                                         </div>
-                                        <div class="col-md-3 ">
+                                        {{-- <div class="col-md-3 ">
                                             <button type="button"
                                                 class="btn btn-primary btn-icon-text btn-rounded btnword w-100 btn-sm"
                                                 data-id="{{ encrypt($lkhp->id_lkhp_final) }}">
                                                 <i class="fa fa-print" aria-hidden="true"></i> &nbsp;
                                                 <b>PRINT LKHP As Word</b>
                                             </button>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 @endcan
                             </div>
