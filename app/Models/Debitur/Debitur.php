@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Debitur extends Model
 {
     use HasFactory;
-    protected $connection = 'ksb_siaudi';
+    //
     protected $table = 'tb_debitur';
     protected $dates = ['created_at', 'updated_at', 'tgl_realisasi', 'tgl_jth_tempo'];
     protected $primaryKey = 'id_debitur';

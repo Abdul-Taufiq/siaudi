@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Example2 extends Model
 {
     use HasFactory;
-    protected $connection = 'ksb_siaudi';
+    //
     protected $table = 'tb_example_2';
     // protected $dates = ['created_at'];
     protected $primaryKey = 'id';

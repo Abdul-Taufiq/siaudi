@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class PivotImg extends Model
 {
     use HasFactory;
-    protected $connection = 'ksb_siaudi';
+    //
     protected $table = 'tb_pivot_img';
     protected $dates = ['created_at', 'updated_at'];
     protected $primaryKey = 'id_img';

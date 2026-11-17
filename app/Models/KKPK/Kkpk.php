@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class Kkpk extends Model
 {
     use HasFactory;
-    protected $connection = 'ksb_siaudi';
+    //
     protected $table = 'tb_kkpk';
     protected $dates = ['created_at', 'updated_at', 'tgl_pemeriksaan'];
     protected $primaryKey = 'id_kkpk';

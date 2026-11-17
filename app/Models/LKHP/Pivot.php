@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class Pivot extends Model
 {
     use HasFactory;
-    protected $connection = 'ksb_siaudi';
+    //
     protected $table = 'tb_pivot';
     protected $dates = ['created_at', 'updated_at'];
     protected $primaryKey = 'id_pivot';

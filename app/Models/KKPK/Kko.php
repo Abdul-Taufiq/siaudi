@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Kko extends Model
 {
     use HasFactory;
-    protected $connection = 'ksb_siaudi';
+    //
     protected $table = 'tb_kko';
     protected $dates = ['created_at', 'updated_at', 'tgl_kunjungan'];
     protected $primaryKey = 'id_kko';

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class RiskEvent extends Model
 {
     use HasFactory;
-    protected $connection = 'ksb_siaudi';
+    //
     protected $table = 'tb_event_risk';
     protected $dates = ['created_at', 'updated_at'];
     protected $primaryKey = 'id_event_risk';

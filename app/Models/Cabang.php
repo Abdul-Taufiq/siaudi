@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 class Cabang extends Model
 {
     use HasFactory;
-    protected $connection = 'ksb_siaudi';
     protected $table = 'cabang';
     protected $primaryKey = 'id_cabang';
 

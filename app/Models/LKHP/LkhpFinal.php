@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class LkhpFinal extends Model
 {
     use HasFactory;
-    protected $connection = 'ksb_siaudi';
+    //
     protected $table = 'tb_lkhp_final';
     protected $dates = ['created_at', 'updated_at', 'tgl_awal', 'tgl_akhir', 'komitmen_tgl', 'tgl_pengembalian'];
     protected $primaryKey = 'id_lkhp_final';
